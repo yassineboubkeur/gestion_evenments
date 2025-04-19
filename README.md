@@ -1,1 +1,3 @@
 
+php artisan key:generate
+
