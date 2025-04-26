@@ -34,13 +34,14 @@ export default function MyEvents() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">My Events</h1>
-      
+      {console.log(registeredEvents)}
       <div className="space-y-6">
         {registeredEvents.map(event => (
           <div key={event.id} className="flex flex-col md:flex-row border rounded-lg overflow-hidden shadow hover:shadow-md transition-shadow">
             <div className="md:w-1/4">
+            {console.log(event.image)}
               <img 
-                src={event.image} 
+                src={`http://127.0.0.1:8000/storage/${event.image}`} 
                 alt={event.title} 
                 className="w-full h-full object-cover"
               />

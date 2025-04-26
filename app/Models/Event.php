@@ -27,8 +27,16 @@ class Event extends Model
         'price' => 'decimal:2'
     ];
 
+    // This is correct - keeps the belongsTo relationship
     public function organizer()
     {
         return $this->belongsTo(User::class, 'organizer_id');
+    }
+
+    // Add this if you have participants (many-to-many relationship)
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'event_user', 'event_id', 'user_id')
+                   ->withTimestamps();
     }
 }

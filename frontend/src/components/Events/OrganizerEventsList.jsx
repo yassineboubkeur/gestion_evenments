@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getToken } from '../../utils/AuthenticatedUser';
+import DotsLoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 
 export default function OrganizerEventsList() {
   const [events, setEvents] = useState([]);
@@ -60,7 +61,7 @@ export default function OrganizerEventsList() {
     }
   };
 
-  if (loading) return <div>Loading events...</div>;
+  if (loading) return <div className='mt-40' ><DotsLoadingAnimation/></div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -80,7 +81,7 @@ export default function OrganizerEventsList() {
           <div key={event.id} className="border rounded-lg overflow-hidden shadow hover:shadow-md transition-shadow">
             {event.image && (
               <img 
-                src={`/storage/${event.image}`} 
+                src={`http://127.0.0.1:8000/storage/${event.image}`}     
                 alt={event.name}
                 className="w-full h-48 object-cover"
               />

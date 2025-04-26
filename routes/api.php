@@ -23,7 +23,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-// Authenticated routes (Sanctum)
+Route::get('allevents', [EventController::class, 'allEvents']);
 Route::middleware(['auth:sanctum'])->group(function () {
     // Common authenticated user routes
     Route::get('/user', function (Request $request) {
@@ -46,6 +46,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['role:organizer'])->group(function () {
         Route::apiResource('events', EventController::class)->except(['index']);
         Route::get('/my-events', [EventController::class, 'myEvents']);
+
+        Route::get('/organizer/stats', [EventController::class, 'stats']);
+
     });
 
     // Admin routes
