@@ -84,7 +84,7 @@ export default function LoginForm({ onLoginSuccess }) {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded-md">
+    <div className="max-w-md mx-auto  bg-white  rounded-md">
       <h2 className="text-xl font-bold mb-4 underline">Login</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-3">

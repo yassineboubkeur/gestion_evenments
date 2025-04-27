@@ -15,6 +15,7 @@ import ParticipantDashboard from './components/Dashboard/ParticipantDashboard';
 import Logout from './components/Logout';
 import EventForm from './components/Events/EventForm';
 import OrganizerEventsList from './components/Events/OrganizerEventsList';
+import EventDetails from './components/EventDetails';
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
+          {/* <Route path="/events/:id" element={<EventDetails />} /> */}
+
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/unauthorized" element={<Unauthorized />} />

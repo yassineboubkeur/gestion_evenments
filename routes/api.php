@@ -24,6 +24,8 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 Route::get('allevents', [EventController::class, 'allEvents']);
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
     // Common authenticated user routes
     Route::get('/user', function (Request $request) {
@@ -58,3 +60,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/system-metrics', [AdminController::class, 'metrics']);
     });
 });
+
+Route::get('events/{event}', [EventController::class, 'showPublic']); 

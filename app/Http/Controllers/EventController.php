@@ -29,7 +29,7 @@ class EventController extends Controller
             'date' => 'required|date',
             'address' => 'required|string|max:255',
             'available_places' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:7048',
             'duration_minutes' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
             'category' => 'required|string|max:255',
@@ -170,6 +170,13 @@ class EventController extends Controller
             ], 500);
         }
     }
+
+    public function showPublic(Event $event)
+{
+    return response()->json([
+        'data' => $event
+    ]);
+}
     public function stats(Request $request)
     {
         $user = $request->user();

@@ -31,7 +31,7 @@ export default function LoadingAnimationLitle({ message = 'Loading...' }) {
         {[0, 1, 2, 3].map((dotIndex) => (
           <div
             key={dotIndex}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            className={`w-2 h-2 rounded-full transition-all  duration-300 ${
               colors[activeDots[dotIndex]]
             } ${
               // Add pulsing animation to active dots
