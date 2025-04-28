@@ -9,9 +9,9 @@ const Navbar = () => {
         <div className="flex items-center ">
           <Link to="/" className="flex items-center">
             <img 
-              src="/logo11.png" // Replace with your logo path
+              src="/logo12.png" // Replace with your logo path
               alt="Company Logo" 
-              className="h-20" // Adjust height as needed
+              className="h-16" // Adjust height as needed
             />
             {/* Optional: Add text next to logo */}
             {/* <span className="ml-2 text-xl font-semibold">Your Brand</span> */}
@@ -22,7 +22,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-6">
           <Link 
             to="/contact" 
-            className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+            className="text-gray-100 bg-cyan-600 text-sm px-4 py-2 rounded-full hover:text-white transition-colors font-medium"
           >
             Contact Us
           </Link>

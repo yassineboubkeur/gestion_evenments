@@ -61,7 +61,7 @@ export default function OrganizerEventsList() {
     }
   };
 
-  if (loading) return <div className='mt-40' ><DotsLoadingAnimation/></div>;
+  if (loading) return <div className='' ><DotsLoadingAnimation/></div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
