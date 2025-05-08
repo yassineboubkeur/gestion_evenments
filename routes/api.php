@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +29,9 @@ Route::get('allevents', [EventController::class, 'allEvents']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::post('/payments/verify', [EventController::class, 'verifyPayment']);
+
     // Common authenticated user routes
     Route::get('/user', function (Request $request) {
         return response()->json([
@@ -35,7 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'permissions' => $request->user()->getAllPermissions()->pluck('name')
         ]);
     });
-    
+
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     // Participant routes
@@ -58,7 +63,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('users', UserController::class);
         Route::post('/users/{user}/assign-role', [UserController::class, 'assignRole']);
         Route::get('/system-metrics', [AdminController::class, 'metrics']);
+        Route::apiResource('events', EventController::class);
+        Route::delete('/admin/events/{event}', [AdminEventController::class, 'destroy']);
+
     });
+
+
+    // Likes 
+    Route::prefix('events/{event}/likes')->group(function () {
+        Route::post('/', [LikeController::class, 'like']);
+        Route::delete('/', [LikeController::class, 'unlike']);
+        Route::get('/check', [LikeController::class, 'checkLike']);
+        Route::get('/count', [LikeController::class, 'likesCount']);
+    });
+
+    Route::get('/user/likes', [LikeController::class, 'userLikes']);
 });
 
-Route::get('events/{event}', [EventController::class, 'showPublic']); 
+Route::middleware(['role:organizer|admin'])->group(function () {
+    Route::post('/', [EventController::class, 'store']);
+    Route::put('/{event}', [EventController::class, 'update']);
+    Route::patch('/{event}', [EventController::class, 'update']);
+});
+Route::get('events/{event}', [EventController::class, 'showPublic']);

@@ -26,12 +26,20 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:participant,organizer'],
+            'birthday' => ['required', 'date', 'before:-13 years'], // Must be at least 13 years old
+            'gender' => ['required', 'string', 'in:male,female,other'],
+            'phone' => ['required', 'string', 'max:20'],
+            'city' => ['required', 'string', 'max:100'], // Added city field
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'birthday' => $request->birthday,
+            'gender' => $request->gender,
+            'phone' => $request->phone,
+            'city' => $request->city, // Added city field
         ]);
 
         // Assign role

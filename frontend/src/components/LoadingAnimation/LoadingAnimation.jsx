@@ -27,11 +27,11 @@ export default function DotsLoadingAnimation({ message = 'Loading...' }) {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
-      <div className="flex space-x-4">
+      <div className="flex space-x-2">
         {[0, 1, 2, 3].map((dotIndex) => (
           <div
             key={dotIndex}
-            className={`w-4 h-4 rounded-full transition-all duration-300 ${
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
               colors[activeDots[dotIndex]]
             } ${
               // Add pulsing animation to active dots

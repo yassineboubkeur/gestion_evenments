@@ -1,15 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Mail\RegistrationConfirmation;
+use App\Models\Registration;
 use Illuminate\Support\Facades\Log;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        $events = Event::all();
+
+        return response()->json($events);
+    }
     // Get all events for the current organizer
     public function myEvents(Request $request)
     {
@@ -153,10 +163,8 @@ class EventController extends Controller
     public function allEvents()
     {
         try {
-            $events = Event::with('organizer') // Eager load organizer relationship if needed
-                ->where('date', '>=', now()) // Only future events
-                ->orderBy('date', 'asc')
-                ->get();
+            $events = Event::orderBy('date', 'asc')->get();
+
     
             return response()->json([
                 'success' => true,
@@ -205,5 +213,72 @@ class EventController extends Controller
                                 //      ];
                                 //  })
         ]);
+    }
+
+    public function verifyPayment(Request $request)
+    {
+        $validated = $request->validate([
+            'event_id' => 'required|exists:events,id',
+            'payment_id' => 'required|string',
+            'payer_email' => 'required|email',
+            'payer_name' => 'required|string',
+            'amount' => 'required|numeric',
+            'status' => 'required|string|in:COMPLETED,FAILED,PENDING',
+            'payment_date' => 'nullable|date'
+        ]);
+    
+        $event = Event::findOrFail($validated['event_id']);
+        $user = $request->user();
+    
+        // Create registration record
+        $registrationData = [
+            'user_id' => $user->id,
+            'event_id' => $event->id,
+            'payment_id' => $validated['payment_id'],
+            'payment_amount' => $validated['amount'],
+            'payment_currency' => 'USD',
+            'payment_status' => strtolower($validated['status']),
+            'payment_date' => $validated['payment_date'] ?? now(),
+            'payer_email' => $validated['payer_email'],
+            'payer_name' => $validated['payer_name'],
+            'ticket_quantity' => 1
+        ];
+    
+        $registration = Registration::create($registrationData);
+        $registration->load('event');
+    
+        try {
+            // Send confirmation email
+            Mail::to($validated['payer_email'])->send(new RegistrationConfirmation($registration));
+            
+            Log::info('Attempting to send email to: '.$validated['payer_email']);
+            Mail::to($validated['payer_email'])->send(new RegistrationConfirmation($registration));
+            Log::info('Email sent successfully to: '.$validated['payer_email']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment verified and registration completed',
+                'registration_id' => $registration->id,
+                'event' => [
+                    'id' => $event->id,
+                    'name' => $event->name
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Email sending failed: ' . $e->getMessage());
+            Log::error('Email failed to send: '.$e->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Registration completed but email could not be sent',
+                'registration_id' => $registration->id,
+                'event' => [
+                    'id' => $event->id,
+                    'name' => $event->name
+                ],
+                'warning' => 'Confirmation email could not be sent'
+            ]);
+        }
+
+     
     }
 }

@@ -2,10 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+
+    public function metrics()
+    {
+        return response()->json([
+            'totalUsers' => User::count(),
+            'activeEvents' => Event::where('date', '>=', now())->count(),
+            'pendingApprovals' => 0 // You can implement this based on your business logic
+        ]);
+    }
     /**
      * Display a listing of the resource.
      */

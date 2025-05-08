@@ -46,4 +46,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->getAllPermissions()->pluck('name');
     }
+
+    public function likedEvents()
+{
+    return $this->belongsToMany(Event::class, 'event_likes', 'user_id', 'event_id')
+               ->withTimestamps();
+}
 }
