@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className=" shadow-lg relative overflow-hidden h-[80px]">
+    <nav className=" shadow-lg relative bg-slate-100 opacity-95  overflow-hidden h-[70px]">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent opacity-20"></div>
@@ -15,13 +15,13 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <div className="relative">
+            <div className="relative  ">
               <img
                 src="/logo12.png"
                 alt="Logo"
                 className="  h-16 w-auto transition-transform duration-300 group-hover:scale-105 group-hover:rotate-2"
               />
-              <div className="absolute inset-0 rounded-full bg-white/10 group-hover:bg-white/20 transition-all duration-300 pointer-events-none"></div>
+              
             </div>
             
           </Link>

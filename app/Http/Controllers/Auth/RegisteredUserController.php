@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
 
@@ -29,8 +30,15 @@ class RegisteredUserController extends Controller
             'birthday' => ['required', 'date', 'before:-13 years'], // Must be at least 13 years old
             'gender' => ['required', 'string', 'in:male,female,other'],
             'phone' => ['required', 'string', 'max:20'],
-            'city' => ['required', 'string', 'max:100'], // Added city field
+            'city' => ['required', 'string', 'max:100'],
+            'profile_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:7048'], // 2MB max
         ]);
+
+        // Handle profile image upload
+        $profileImagePath = null;
+        if ($request->hasFile('profile_image')) {
+            $profileImagePath = $request->file('profile_image')->store('profile_images', 'public');
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -39,7 +47,8 @@ class RegisteredUserController extends Controller
             'birthday' => $request->birthday,
             'gender' => $request->gender,
             'phone' => $request->phone,
-            'city' => $request->city, // Added city field
+            'city' => $request->city,
+            'profile_image' => $profileImagePath,
         ]);
 
         // Assign role

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -17,6 +18,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'birthday',
+        'gender',
+        'phone',
+        'city',
+        'profile_image',
+
     ];
 
     protected $appends = ['role_names', 'permission_names'];
@@ -31,6 +38,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
+
+    public function getProfileImageUrlAttribute()
+    {
+        return $this->profile_image 
+            ? Storage::url($this->profile_image)
+            : asset('images/default-profile.jpg'); // Default image if none is set
+    }
     // Add this relationship
     public function events()
     {

@@ -3,23 +3,26 @@ import { useNavigate } from "react-router-dom";
 
 async function registerUser(formData) {
     try {
+        const formDataToSend = new FormData();
+        
+        // Append all form fields to FormData
+        Object.keys(formData).forEach(key => {
+            if (key !== 'profileImage') {
+                formDataToSend.append(key, formData[key]);
+            }
+        });
+        
+        // Append the image file if it exists
+        if (formData.profileImage) {
+            formDataToSend.append('profile_image', formData.profileImage);
+        }
+
         const response = await fetch("http://127.0.0.1:8000/api/register", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 Accept: "application/json",
             },
-            body: JSON.stringify({
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                password_confirmation: formData.passwordConfirmation,
-                role: formData.role,
-                birthday: formData.birthday,
-                gender: formData.gender,
-                phone: formData.phone,
-                city: formData.city, // Added city field
-            }),
+            body: formDataToSend,
         });
 
         const data = await response.json();
@@ -41,19 +44,36 @@ export default function RegisterForm({ onRegisterSuccess }) {
         name: "",
         email: "",
         password: "",
-        passwordConfirmation: "",
+        password_confirmation: "",
         role: "participant",
         birthday: "",
         gender: "male",
         phone: "",
-        city: "", // Added city field
+        city: "",
+        profileImage: null,
     });
+    const [previewImage, setPreviewImage] = useState(null);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleChange = (e) =>
+    const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setForm({ ...form, profileImage: file });
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -109,7 +129,63 @@ export default function RegisterForm({ onRegisterSuccess }) {
             <form
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5"
+                encType="multipart/form-data"
             >
+                {/* Profile Image */}
+                <div className="col-span-1 md:col-span-2">
+                    <label
+                        htmlFor="profileImage"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                        Profile Image
+                    </label>
+                    <div className="flex items-center gap-4">
+                        <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
+                            {previewImage ? (
+                                <img 
+                                    src={previewImage} 
+                                    alt="Profile preview" 
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                                    <svg 
+                                        className="w-8 h-8 text-gray-400" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex-1">
+                            <input
+                                id="profileImage"
+                                name="profileImage"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700
+                                hover:file:bg-blue-100"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">
+                                JPEG, PNG, JPG, GIF (Max 2MB)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Full Name */}
                 <div className="col-span-1">
                     <label
@@ -172,17 +248,17 @@ export default function RegisterForm({ onRegisterSuccess }) {
                 {/* Confirm Password */}
                 <div className="col-span-1">
                     <label
-                        htmlFor="passwordConfirmation"
+                        htmlFor="password_confirmation"
                         className="block text-sm font-medium text-gray-700"
                     >
                         Confirm Password
                     </label>
                     <input
-                        id="passwordConfirmation"
-                        name="passwordConfirmation"
+                        id="password_confirmation"
+                        name="password_confirmation"
                         type="password"
                         placeholder="••••••••"
-                        value={form.passwordConfirmation}
+                        value={form.password_confirmation}
                         onChange={handleChange}
                         className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         required

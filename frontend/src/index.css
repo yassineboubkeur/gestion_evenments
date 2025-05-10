@@ -3,3 +3,78 @@
 @tailwind utilities;
 
 
+.colors{
+    background-color: rgb(24, 35, 15);
+    background-color: rgb(39, 57, 28);
+    background-color: rgb(37, 95, 56);
+    background-color: rgb(31, 125, 83);
+}
+
+/* .bg1 {
+    background: linear-gradient(to right, rgb(14, 54, 21), rgb(38, 123, 131));
+} */
+.bg0 {
+    background-image: url('bg0.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg1 {
+    background-image: url('bg1.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg2 {
+    background-image: url('bg2.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg3 {
+    background-image: url('bg3.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg4 {
+    background-image: url('bg4.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg5 {
+    background-image: url('bg5.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg6 {
+    background-image: url('bg6.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+
+.bg7 {
+    background-image: url('bg7.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+
+.text_dark{
+    color: rgb(15, 15, 15);
+}
+/* .text_dark:hover{
+    color: rgb(11, 46, 122);
+} */
+
+.text_light{
+    color: rgb(233, 230, 230);
+}
+
+/* .text_light:hover{
+    color: rgb(236, 99, 25);
+
+} */

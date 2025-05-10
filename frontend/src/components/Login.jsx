@@ -17,7 +17,7 @@ async function loginUser(credentials) {
     if (!response.ok) {
       throw new Error(data.message || 'Login failed');
     }
-
+console.log(data)
     const userRole = data.user.role_names[0];
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
