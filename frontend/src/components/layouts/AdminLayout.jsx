@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
+import { useStyle } from "../../context/StyleContext";
+import ThemeBg from "../ThemeBg";
 
 export default function AdminLayout() {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+        const { updateSharedString, sharedString } = useStyle();
+    
 
     const navItems = [
         { 
@@ -46,7 +50,7 @@ export default function AdminLayout() {
     ];
 
     return (
-        <div className="min-h-screen">
+        <div className={`min-h-screen bg${sharedString }`}>
             <Navbar />
             
             {/* Mobile menu button */}
@@ -71,8 +75,8 @@ export default function AdminLayout() {
                 <aside 
                     className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
                     md:translate-x-0 transform transition-transform duration-200 ease-in-out
-                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-900 
-                    text-white md:m-7 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
+                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-900 bg-opacity-70 
+                    text-white md:m-8 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
                 >
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold tracking-wide text-white">
@@ -101,6 +105,7 @@ export default function AdminLayout() {
                             ))}
                         </ul>
                     </nav>
+                    <ThemeBg/>
                 </aside>
                 </div>
 

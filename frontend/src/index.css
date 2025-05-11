@@ -62,7 +62,18 @@
     background-size: cover; /* or 'contain' depending on your needs */
     background-position: center;
 }
-
+.bg8 {
+    background-image: url('bg8.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg9 {
+    background-image: url('bg9.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
 .text_dark{
     color: rgb(15, 15, 15);
 }

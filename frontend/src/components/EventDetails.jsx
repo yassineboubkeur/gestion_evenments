@@ -5,6 +5,7 @@ import LoginForm from "./Login";
 import PaymentProcedure from "./PaymentProcedure";
 import { useLikes } from "../context/LikesContext";
 import { useStyle } from "../context/StyleContext";
+import LoadingComponent from "./LoadingAnimation/LoadingComponent";
 
 export default function EventDetails({ eventId, onBack }) {
     const { id } = useParams();
@@ -60,7 +61,8 @@ export default function EventDetails({ eventId, onBack }) {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-[300px]">
-                <LoadingAnimation size="lg" />
+                {/* <LoadingAnimation size="lg" /> */}
+                <LoadingComponent/>
             </div>
         );
     }
@@ -96,12 +98,12 @@ export default function EventDetails({ eventId, onBack }) {
                 ) : (
                     <>
                         {/* Header */}
-                        <div className="flex items-center justify-between p-1">
+                        <div className="flex items-center justify-between ">
                             <button
                                 onClick={() => onBack(false)}
                                 className={`${
                                     sharedString != 0 && sharedString != 7
-                                        ? "text_light"
+                                        ? "text_dark"
                                         : "text_dark"
                                 }  font-medium flex items-center`}
                             >
@@ -126,7 +128,7 @@ export default function EventDetails({ eventId, onBack }) {
                         </div>
 
                         {/* Content */}
-                        <div className="grid md:grid-cols-2 gap-8 p-6 h-[440px]">
+                        <div className="grid md:grid-cols-2 gap-8  h-[540px]">
                             {/* Image */}
                             <div className="relative overflow-hidden rounded-xl shadow-md h-full">
                                 <img
@@ -145,11 +147,11 @@ export default function EventDetails({ eventId, onBack }) {
 
                             {/* Details */}
                             <div className="overflow-y-auto pr-2">
-    <h1 className={`text-3xl font-bold ${sharedString != 0 && sharedString != 7 ? 'text_light' : 'text_dark'} mb-2`}>
+    <h1 className={`text-3xl font-bold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-2`}>
         {event.name}
     </h1>
 
-    <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_light' : 'text_dark'} mb-1`}>
+    <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
         <svg
             className="w-5 h-5 mr-2 text-gray-500"
             fill="none"
@@ -166,7 +168,7 @@ export default function EventDetails({ eventId, onBack }) {
         <span>{event.address}</span>
     </div>
 
-    <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_light' : 'text_dark'} mb-3`}>
+    <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-3`}>
         <svg
             className="w-5 h-5 mr-2 text-gray-500"
             fill="none"
@@ -194,16 +196,16 @@ export default function EventDetails({ eventId, onBack }) {
         </span>
     </div>
 
-    <div className="mb-6">
-        <h2 className={`text-xl font-semibold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_light'} mb-1`}>
+    <div className="mb-3">
+        <h2 className={`text-xl font-semibold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
             About
         </h2>
-        <p className={`${sharedString !== 0 && sharedString !== 7 ? 'text_light' : 'text_dark'} leading-relaxed`}>
+        <p className={`${sharedString !== 0 && sharedString !== 7 ? 'text_dark' : 'text_dark'} leading-relaxed`}>
             {event.description}
         </p>
     </div>
 
-    <div className={`mb-6 space-y-2 text-sm ${sharedString != 0 && sharedString != 7 ? 'text_light' : 'text_dark'}`}>
+    <div className={`mb-6 space-y-2 text-sm ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'}`}>
         <div>
             <strong>Organizer:</strong>{" "}
             {event.organizer?.name || "N/A"}
@@ -268,7 +270,7 @@ export default function EventDetails({ eventId, onBack }) {
                         <p className="text-gray-600 mb-4">
                             Please log in to continue booking.
                         </p>
-                        <LoginForm onLoginSuccess={handleLoginSuccess} />
+                        <LoginForm onLoginSuccess={handleLoginSuccess} miniLogin={true} />
                         <div className="text-right mt-4">
                             <button
                                 onClick={() => setShowLogin(false)}

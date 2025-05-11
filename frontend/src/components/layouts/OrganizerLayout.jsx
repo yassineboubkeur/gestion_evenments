@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
+import { useStyle } from "../../context/StyleContext";
+import ThemeBg from "../ThemeBg";
 
 export default function OrganizerLayout() {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { updateSharedString, sharedString } = useStyle();
 
     const navItems = [
         { 
@@ -46,13 +49,13 @@ export default function OrganizerLayout() {
     ];
 
     return (
-        <div className="min-h-screen bg2">
+        <div className={`min-h-screen bg${sharedString}`}>
             <Navbar />
             
             {/* Mobile menu button */}
             <button 
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="md:hidden fixed bottom-6 right-6 z-50 bg-blue-700 text-white p-3 rounded-full shadow-lg"
+                className="md:hidden fixed bottom-6 right-6 z-50 bg-gray-900 text-white p-3 rounded-full shadow-lg"
             >
                 {sidebarOpen ? (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,50 +71,50 @@ export default function OrganizerLayout() {
             <div className="flex flex-col md:flex-row">
                 {/* Sidebar - Hidden on mobile unless sidebarOpen is true */}
                 <div>
-                <aside 
-                    className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-                    md:translate-x-0 transform transition-transform duration-200 ease-in-out
-                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-blue-700 to-blue-800 
-                    text-white md:m-7 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
-                >
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold tracking-wide text-white flex items-center">
-                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            Organizer Panel
-                        </h2>
-                        <p className="text-blue-200 text-sm mt-2">Manage your events and participants</p>
-                        <div className="h-1 w-12 bg-white mt-2 rounded-full"></div>
-                    </div>
+                    <aside 
+                        className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        md:translate-x-0 transform transition-transform duration-200 ease-in-out
+                        fixed md:static inset-y-0 left-0 z-40 w-64 bg-blue-600 bg-opacity-70
+                        text-white md:m-8 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
+                    >
+                        <div className="mb-8">
+                            <h2 className="text-2xl font-bold tracking-wide text-white flex items-center">
+                                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                                Organizer Panel
+                            </h2>
+                            <p className="text-gray-300 text-sm mt-2">Manage your events and participants</p>
+                            <div className="h-1 w-12 bg-blue-500 mt-2 rounded-full"></div>
+                        </div>
 
-                    <nav>
-                        <ul className="space-y-1">
-                            {navItems.map(({ label, path, icon }) => (
-                                <li key={path}>
-                                    <Link
-                                        to={path}
-                                        onClick={() => setSidebarOpen(false)}
-                                        className={`flex items-center px-4 py-3 rounded-lg transition-all ${
-                                            location.pathname === path
-                                                ? "bg-white text-blue-800 shadow-md"
-                                                : "hover:bg-blue-600 hover:bg-opacity-50"
-                                        }`}
-                                    >
-                                        {icon}
-                                        {label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
-                </aside>
+                        <nav>
+                            <ul className="space-y-2">
+                                {navItems.map(({ label, path, icon }) => (
+                                    <li key={path}>
+                                        <Link
+                                            to={path}
+                                            onClick={() => setSidebarOpen(false)}
+                                            className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200 ${
+                                                location.pathname === path
+                                                    ? "bg-blue-600 text-white shadow"
+                                                    : "hover:bg-gray-700 hover:text-white text-gray-300"
+                                            }`}
+                                        >
+                                            {icon}
+                                            {label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                        <ThemeBg/>
+                    </aside>
                 </div>
-                
 
                 {/* Main Content */}
-                <main className="flex-1 p-4 md:p-8 overflow-y-auto mt-16 md:mt-0">
-                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 min-h-[calc(100vh-10rem)]">
+                <main className="flex-1 rounded-xl md:p-8 overflow-y-auto mt-16 md:mt-0">
+                    <div className="bg-white p-2 rounded-xl shadow-sm min-h-[calc(100vh-10rem)]">
                         <Outlet />
                     </div>
                 </main>

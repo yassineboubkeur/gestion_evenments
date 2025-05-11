@@ -10,3 +10,6 @@ Currently, two official plugins are available:
 
 
 colors : rgb(24, 35, 15) 
+
+
+npm install styled-components

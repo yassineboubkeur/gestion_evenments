@@ -6,6 +6,8 @@ import EventDetails from "./EventDetails";
 import LoginShortcut from "./LoginShortcut";
 import { useLikes } from "../context/LikesContext";
 import { useStyle } from "../context/StyleContext";
+import ThemeBg from "./ThemeBg";
+import LoadingComponent from "./LoadingAnimation/LoadingComponent";
 
 export default function HomePage() {
     const [events, setEvents] = useState([]);
@@ -117,8 +119,7 @@ export default function HomePage() {
     };
 
     return (
-        <div className={`min-h-screen bg${sharedString}`}>
-            <Navbar />
+<div className={`min-h-screen ${sharedString ? `bg${sharedString}` : "bg0"}`}>            <Navbar />
 
             {/* Floating background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -127,10 +128,128 @@ export default function HomePage() {
             </div>
 
             <div className="container mx-auto px-4 py-8 relative z-10">
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-8 z-10">
                     {/* Left Sidebar - Filters */}
                     <div className="w-full lg:w-80 shrink-0">
                         <div className="p-4 rounded-xl" style={glassStyle}>
+                        <div className="pb-3 border-b border-white/20">
+                                    {isAuthenticated ? (
+                                        <div className="space-y-3">
+                                            <div
+                                                className="bg-white/30 p-3 rounded-lg"
+                                                style={glassStyle}
+                                            >
+                                                <div className="flex items-center">
+                                                   
+                                                    <img   className="w-20 h-20 rounded-full mr-2"
+                                                            src={
+                                                                "http://127.0.0.1:8000/storage/" +
+                                                                user.profile_image
+                                                            }
+                                                            alt="profileimg"
+                                                        />
+                                                    <div className="truncate">
+                                                        <p className="font-medium text-sm text-gray-800 truncate">
+                                                            {user?.name}
+                                                        </p>
+                                                        <p className="text-xs text-gray-600 truncate">
+                                                            {user?.email}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <span className="inline-block px-1.5 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full mt-1">
+                                                    {userrole}
+                                                </span>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <button
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/${userrole}/dashboard`
+                                                        )
+                                                    }
+                                                    className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full hover:opacity-90 transition font-semibold flex items-center justify-center shadow-sm"
+                                                >
+                                                    <svg
+                                                        className="w-3 h-3 mr-1"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth="2"
+                                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                                                        ></path>
+                                                    </svg>
+                                                    Dashboard
+                                                </button>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="px-3 py-1.5 text-sm bg-white/80 border border-red-500/30 text-red-500 rounded-full font-semibold hover:bg-red-50 transition flex items-center justify-center shadow-sm"
+                                                >
+                                                    <svg
+                                                        className="w-3 h-3 mr-1"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth="2"
+                                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                                        ></path>
+                                                    </svg>
+                                                    Logout
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Link
+                                                to="/login"
+                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 font-semibold to-blue-600 text-white rounded-full hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                            >
+                                                <svg
+                                                    className="w-3 h-3 mr-1"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                                                    ></path>
+                                                </svg>
+                                                Login
+                                            </Link>
+                                            <Link
+                                                to="/register"
+                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                            >
+                                                <svg
+                                                    className="w-3 h-3 mr-1"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                                                    ></path>
+                                                </svg>
+                                                Register
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                             <div className="space-y-4">
                                 {/* Search Section */}
                                 <div>
@@ -236,125 +355,8 @@ export default function HomePage() {
                                 </div>
 
                                 {/* User Section */}
-                                <div className="pt-3 border-t border-white/20">
-                                    {isAuthenticated ? (
-                                        <div className="space-y-3">
-                                            <div
-                                                className="bg-white/30 p-3 rounded-lg"
-                                                style={glassStyle}
-                                            >
-                                                <div className="flex items-center">
-                                                   
-                                                    <img   className="w-20 h-20 rounded-full mr-2"
-                                                            src={
-                                                                "http://127.0.0.1:8000/storage/" +
-                                                                user.profile_image
-                                                            }
-                                                            alt="profileimg"
-                                                        />
-                                                    <div className="truncate">
-                                                        <p className="font-medium text-sm text-gray-800 truncate">
-                                                            {user?.name}
-                                                        </p>
-                                                        <p className="text-xs text-gray-600 truncate">
-                                                            {user?.email}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <span className="inline-block px-1.5 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full mt-1">
-                                                    {userrole}
-                                                </span>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <button
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/${userrole}/dashboard`
-                                                        )
-                                                    }
-                                                    className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:opacity-90 transition flex items-center justify-center shadow-sm"
-                                                >
-                                                    <svg
-                                                        className="w-3 h-3 mr-1"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth="2"
-                                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                                                        ></path>
-                                                    </svg>
-                                                    Dashboard
-                                                </button>
-                                                <button
-                                                    onClick={handleLogout}
-                                                    className="px-3 py-1.5 text-sm bg-white/80 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-50 transition flex items-center justify-center shadow-sm"
-                                                >
-                                                    <svg
-                                                        className="w-3 h-3 mr-1"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth="2"
-                                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                                        ></path>
-                                                    </svg>
-                                                    Logout
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Link
-                                                to="/login"
-                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:opacity-90 transition flex items-center justify-center shadow-sm"
-                                            >
-                                                <svg
-                                                    className="w-3 h-3 mr-1"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                                                    ></path>
-                                                </svg>
-                                                Login
-                                            </Link>
-                                            <Link
-                                                to="/register"
-                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-lg hover:opacity-90 transition flex items-center justify-center shadow-sm"
-                                            >
-                                                <svg
-                                                    className="w-3 h-3 mr-1"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                                                    ></path>
-                                                </svg>
-                                                Register
-                                            </Link>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="grid grid-cols-5 gap-1 justify-between">
+                               
+                                {/* <div className="grid grid-cols-5 gap-1 justify-between">
                                     {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
                                         <button
                                             key={i}
@@ -370,14 +372,15 @@ export default function HomePage() {
                                             />
                                         </button>
                                     ))}
-                                </div>
+                                </div> */}
+                                <ThemeBg/>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Content - Events Listing */}
                     <div className="flex-1">
-                        <div className="p-6 rounded-2xl" style={glassStyle}>
+                        <div className="p-2 rounded-2xl z-20" style={glassStyle}>
                             {showEventDetails ? (
                                 <EventDetails
                                     eventId={eventId}
@@ -387,7 +390,12 @@ export default function HomePage() {
                                 <>
                                     {loading ? (
                                         <div className="flex justify-center items-center py-16">
-                                            <DotsLoadingAnimation size="lg" />
+                                            {/* <DotsLoadingAnimation size="lg" /> */}
+                                            <div className="z-20 ">
+                                            <LoadingComponent size="lg" />
+                                            </div>
+                            
+                                            
                                         </div>
                                     ) : filteredEvents.length === 0 ? (
                                         <div className="text-center py-16">

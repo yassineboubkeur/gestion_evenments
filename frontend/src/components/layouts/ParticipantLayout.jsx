@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
+import ThemeBg from "../ThemeBg";
+import { useStyle } from "../../context/StyleContext";
 
 export default function ParticipantLayout() {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+            const { updateSharedString, sharedString } = useStyle();
+    
 
     const navItems = [
         { 
@@ -46,13 +50,13 @@ export default function ParticipantLayout() {
     ];
 
     return (
-        <div className="min-h-screen bg1">
+        <div className={`min-h-screen bg${sharedString}`}>
             <Navbar />
             
             {/* Mobile menu button */}
             <button 
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="md:hidden fixed bottom-6 right-6 z-50 bg-green-700 text-white p-3 rounded-full shadow-lg"
+                className="md:hidden fixed bottom-6 right-6 z-50 bg-green-700 bg-opacity-50 text-white p-3 rounded-full shadow-lg"
             >
                 {sidebarOpen ? (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,14 +69,14 @@ export default function ParticipantLayout() {
                 )}
             </button>
 
-            <div className="flex flex-col md:flex-row">
+            <div className="flex flex-col  md:flex-row">
                 {/* Sidebar - Hidden on mobile unless sidebarOpen is true */}
-              <div>
+              <div className="">
               <aside 
                     className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
                     md:translate-x-0 transform transition-transform duration-200 ease-in-out
-                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-green-700 to-green-800 
-                    text-white md:m-7 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
+                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-green-600 to-green-700 
+                    text-white md:m-8 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
                 >
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold tracking-wide text-white flex items-center">
@@ -105,6 +109,8 @@ export default function ParticipantLayout() {
                             ))}
                         </ul>
                     </nav>
+
+                    <ThemeBg path="../" />
                 </aside>
               </div>
 

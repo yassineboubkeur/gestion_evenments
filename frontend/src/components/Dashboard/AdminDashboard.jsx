@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCurrentUser } from '../../utils/AuthenticatedUser';
 import LoadingAnimationLitle from '../LoadingAnimation/LoadingAnimationLitle';
+import { useStyle } from '../../context/StyleContext';
 
 export default function AdminDashboard() {
   const user = getCurrentUser();
@@ -11,6 +12,8 @@ export default function AdminDashboard() {
     pendingApprovals: 0
   });
   const [loading, setLoading] = useState(true);
+      const { updateSharedString, sharedString } = useStyle();
+  
 
   // Glassmorphism style variables
   const glassStyle = {
@@ -52,7 +55,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen `}>
       {/* Floating background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>
