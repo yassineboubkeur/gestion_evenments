@@ -62,7 +62,7 @@ export default function AdminDashboard() {
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-200 opacity-20 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto relative z-10">
+      <div className="container mx-auto  z-10">
         <div className="space-y-8">
           {/* Header Section */}
           <div className="p-6 rounded-2xl" style={glassStyle}>

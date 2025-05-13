@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import DotsLoadingAnimation from "./LoadingAnimation/LoadingAnimation";
 import EventDetails from "./EventDetails";
-import LoginShortcut from "./LoginShortcut";
-import { useLikes } from "../context/LikesContext";
 import { useStyle } from "../context/StyleContext";
 import ThemeBg from "./ThemeBg";
 import LoadingComponent from "./LoadingAnimation/LoadingComponent";
+import { useRefresh } from "../context/RefreshContext";
+import LikesOption from "./LikesOption";
 
 export default function HomePage() {
     const [events, setEvents] = useState([]);
@@ -22,15 +21,12 @@ export default function HomePage() {
     const eventsPerPage = 6;
     const navigate = useNavigate();
     const { updateSharedString, sharedString } = useStyle();
-    const { likedEvents, fetchUserLikes, toggleLike } = useLikes();
     const userrole = localStorage.getItem("role");
+    const { refreshKey } = useRefresh();
 
-    // Glassmorphism style variables
     const glassStyle = {
         background: "rgba(255, 255, 255, 0.4)",
         backdropFilter: "blur(10px)",
-        // border: "1px solid rgba(255, 255, 255, 0.18)",
-        // boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
     };
 
     useEffect(() => {
@@ -43,7 +39,6 @@ export default function HomePage() {
         if (userData) {
             setIsAuthenticated(true);
             setUser(JSON.parse(userData));
-            fetchUserLikes();
         }
     };
 
@@ -52,28 +47,141 @@ export default function HomePage() {
             const token = localStorage.getItem("token");
             const headers = {};
             if (token) headers["Authorization"] = `Bearer ${token}`;
-
+    
             setLoading(true);
             const response = await fetch(
                 "http://127.0.0.1:8000/api/allevents",
                 { headers }
             );
-
+    
             if (!response.ok) throw new Error("Failed to fetch events");
-
+    
             const data = await response.json();
-            setEvents(data.data || data);
+            
+            // Ensure is_liked is properly set (default to false if not present)
+            const eventsWithLikes = (data.data || data).map((event) => ({
+                ...event,
+                is_liked: event.is_liked || false,
+            }));
+            
+            setEvents(eventsWithLikes);
             setLoading(false);
+            console.log("Fetched events with likes:", eventsWithLikes);
         } catch (error) {
             console.error("Error fetching events:", error);
             setLoading(false);
         }
     };
+    // const fetchEvents = async () => {
+    //     try {
+    //         const token = localStorage.getItem("token");
+    //         const headers = {};
+    //         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    const handleLike = async (eventId, e) => {
-        e.stopPropagation();
-        await toggleLike(eventId);
+    //         setLoading(true);
+    //         const response = await fetch(
+    //             "http://127.0.0.1:8000/api/allevents",
+    //             { headers }
+    //         );
+
+    //         if (!response.ok) throw new Error("Failed to fetch events");
+
+    //         const data = await response.json();
+    //         setEvents(data.data || data);
+    //         setLoading(false);
+    //     } catch (error) {
+    //         console.error("Error fetching events:", error);
+    //         setLoading(false);
+    //     }
+    // };
+    const handleLike = async (eventId) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            const response = await fetch(
+                `http://127.0.0.1:8000/api/events/${eventId}/toggle-like`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to update like");
+            }
+            console.log(data)
+            // Update both likes_count and is_liked
+            setEvents((prevEvents) =>
+                prevEvents.map((event) =>
+                    event.id === eventId
+                        ? {
+                              ...event,
+                              likes_count: data.likes_count,
+                              is_liked: data.liked, // Make sure your backend returns this
+                          }
+                        : event
+                )
+            );
+        } catch (error) {
+            console.error("Error toggling like:", error);
+            alert(error.message || "Failed to update like");
+        }
     };
+    // const handleLike = async (eventId) => {
+    //     try {
+    //         const token = localStorage.getItem("token");
+    //         if (!token) {
+    //             // Redirect to login or show error
+    //             navigate('/login');
+    //             return;
+    //         }
+
+    //         const response = await fetch(
+    //             `http://127.0.0.1:8000/api/events/${eventId}/toggle-like`,
+    //             {
+    //                 method: "POST",
+    //                 headers: {
+    //                     "Authorization": `Bearer ${token}`,
+    //                     "Content-Type": "application/json",
+    //                 },
+    //             }
+    //         );
+
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             throw new Error(errorData.message || "Failed to update like");
+    //         }
+
+    //         const data = await response.json();
+
+    //         // Update the UI immediately (optimistic update)
+    //         setEvents(prevEvents =>
+    //             prevEvents.map(event =>
+    //                 event.id === eventId
+    //                     ? {
+    //                         ...event,
+    //                         likes_count: data.likes_count,
+    //                         is_liked: data.liked
+    //                     }
+    //                     : event
+    //             )
+    //         );
+
+    //     } catch (error) {
+    //         console.error("Error toggling like:", error);
+    //         // Optionally show error to user
+    //         alert(error.message || "Failed to update like");
+    //     }
+    // };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -102,7 +210,6 @@ export default function HomePage() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Reset to first page when filters change
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, categoryFilter]);
@@ -112,14 +219,17 @@ export default function HomePage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const handleClick = (e) => {
-        console.log(sharedString);
-        updateSharedString(e);
-        console.log(sharedString);
-    };
+    useEffect(() => {
+        fetchEvents();
+    }, [refreshKey]);
 
     return (
-<div className={`min-h-screen ${sharedString ? `bg${sharedString}` : "bg0"}`}>            <Navbar />
+        <div
+            className={`min-h-screen ${
+                sharedString ? `bg${sharedString}` : "bg0"
+            }`}
+        >
+            <Navbar />
 
             {/* Floating background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -127,91 +237,46 @@ export default function HomePage() {
                 <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-200 opacity-20 blur-3xl"></div>
             </div>
 
-            <div className="container mx-auto px-4 py-8 relative z-10">
+            <div className="container mx-auto px-4 py-8 z-10">
                 <div className="flex flex-col lg:flex-row gap-8 z-10">
                     {/* Left Sidebar - Filters */}
                     <div className="w-full lg:w-80 shrink-0">
                         <div className="p-4 rounded-xl" style={glassStyle}>
-                        <div className="pb-3 border-b border-white/20">
-                                    {isAuthenticated ? (
-                                        <div className="space-y-3">
-                                            <div
-                                                className="bg-white/30 p-3 rounded-lg"
-                                                style={glassStyle}
-                                            >
-                                                <div className="flex items-center">
-                                                   
-                                                    <img   className="w-20 h-20 rounded-full mr-2"
-                                                            src={
-                                                                "http://127.0.0.1:8000/storage/" +
-                                                                user.profile_image
-                                                            }
-                                                            alt="profileimg"
-                                                        />
-                                                    <div className="truncate">
-                                                        <p className="font-medium text-sm text-gray-800 truncate">
-                                                            {user?.name}
-                                                        </p>
-                                                        <p className="text-xs text-gray-600 truncate">
-                                                            {user?.email}
-                                                        </p>
-                                                    </div>
+                            <div className="pb-3 border-b border-white/20">
+                                {isAuthenticated ? (
+                                    <div className="space-y-3">
+                                        <div
+                                            className="bg-white/30 p-3 rounded-lg"
+                                            style={glassStyle}
+                                        >
+                                            <div className="flex items-center">
+                                                <img
+                                                    className="w-20 h-20 rounded-full mr-2"
+                                                    src={`http://127.0.0.1:8000/storage/${user.profile_image}`}
+                                                    alt="profileimg"
+                                                />
+                                                <div className="truncate">
+                                                    <p className="font-medium text-sm text-gray-800 truncate">
+                                                        {user?.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 truncate">
+                                                        {user?.email}
+                                                    </p>
                                                 </div>
-                                                <span className="inline-block px-1.5 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full mt-1">
-                                                    {userrole}
-                                                </span>
                                             </div>
+                                            <span className="inline-block px-1.5 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full mt-1">
+                                                {userrole}
+                                            </span>
+                                        </div>
 
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <button
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/${userrole}/dashboard`
-                                                        )
-                                                    }
-                                                    className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full hover:opacity-90 transition font-semibold flex items-center justify-center shadow-sm"
-                                                >
-                                                    <svg
-                                                        className="w-3 h-3 mr-1"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth="2"
-                                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                                                        ></path>
-                                                    </svg>
-                                                    Dashboard
-                                                </button>
-                                                <button
-                                                    onClick={handleLogout}
-                                                    className="px-3 py-1.5 text-sm bg-white/80 border border-red-500/30 text-red-500 rounded-full font-semibold hover:bg-red-50 transition flex items-center justify-center shadow-sm"
-                                                >
-                                                    <svg
-                                                        className="w-3 h-3 mr-1"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth="2"
-                                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                                        ></path>
-                                                    </svg>
-                                                    Logout
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
                                         <div className="grid grid-cols-2 gap-2">
-                                            <Link
-                                                to="/login"
-                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 font-semibold to-blue-600 text-white rounded-full hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                            <button
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/${userrole}/dashboard`
+                                                    )
+                                                }
+                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full hover:opacity-90 transition font-semibold flex items-center justify-center shadow-sm"
                                             >
                                                 <svg
                                                     className="w-3 h-3 mr-1"
@@ -223,14 +288,14 @@ export default function HomePage() {
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
                                                         strokeWidth="2"
-                                                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
                                                     ></path>
                                                 </svg>
-                                                Login
-                                            </Link>
-                                            <Link
-                                                to="/register"
-                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                                Dashboard
+                                            </button>
+                                            <button
+                                                onClick={handleLogout}
+                                                className="px-3 py-1.5 text-sm bg-white/80 border border-red-500/30 text-red-500 rounded-full font-semibold hover:bg-red-50 transition flex items-center justify-center shadow-sm"
                                             >
                                                 <svg
                                                     className="w-3 h-3 mr-1"
@@ -242,26 +307,60 @@ export default function HomePage() {
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
                                                         strokeWidth="2"
-                                                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                                                     ></path>
                                                 </svg>
-                                                Register
-                                            </Link>
+                                                Logout
+                                            </button>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <Link
+                                            to="/login"
+                                            className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 font-semibold to-blue-600 text-white rounded-full hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                        >
+                                            <svg
+                                                className="w-3 h-3 mr-1"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                                                ></path>
+                                            </svg>
+                                            Login
+                                        </Link>
+                                        <Link
+                                            to="/register"
+                                            className="px-3 py-1.5 text-sm bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                        >
+                                            <svg
+                                                className="w-3 h-3 mr-1"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                                                ></path>
+                                            </svg>
+                                            Register
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
                             <div className="space-y-4">
                                 {/* Search Section */}
                                 <div>
-                                    <h2
-                                        className={`text-md font-medium mb-2 flex items-center ${
-                                            sharedString != "0" &&
-                                            sharedString != "7"
-                                                ? "text_light"
-                                                : "text_dark"
-                                        }`}
-                                    >
-                                        {console.log(sharedString)}
+                                    <h2 className="text-md font-medium mb-2 flex items-center text-gray-800">
                                         <svg
                                             className="w-4 h-4 mr-2 text-indigo-600"
                                             fill="none"
@@ -307,14 +406,7 @@ export default function HomePage() {
 
                                 {/* Filter Section */}
                                 <div>
-                                    <h2
-                                        className={`text-md font-medium mb-2 flex items-center ${
-                                            sharedString != "0" &&
-                                            sharedString != "7"
-                                                ? "text_light"
-                                                : "text_dark"
-                                        }`}
-                                    >
+                                    <h2 className="text-md font-medium mb-2 flex items-center text-gray-800">
                                         <svg
                                             className="w-4 h-4 mr-2 text-indigo-600"
                                             fill="none"
@@ -353,34 +445,17 @@ export default function HomePage() {
                                         <option value="Sports">Sports</option>
                                     </select>
                                 </div>
-
-                                {/* User Section */}
-                               
-                                {/* <div className="grid grid-cols-5 gap-1 justify-between">
-                                    {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                                        <button
-                                            key={i}
-                                            className="transition-all duration-300 ease-in-out hover:scale-105"
-                                            onClick={() => {
-                                                handleClick(i);
-                                            }}
-                                        >
-                                            <img
-                                                className="w-10 h-10 rounded-full object-cover transition-all duration-300 ease-in-out hover:w-12 hover:h-12"
-                                                src={`bg${i}.png`}
-                                                alt={`Background ${i}`}
-                                            />
-                                        </button>
-                                    ))}
-                                </div> */}
-                                <ThemeBg/>
+                                <ThemeBg />
                             </div>
                         </div>
                     </div>
 
                     {/* Right Content - Events Listing */}
                     <div className="flex-1">
-                        <div className="p-2 rounded-2xl z-20" style={glassStyle}>
+                        <div
+                            className="p-2 rounded-2xl z-20"
+                            style={glassStyle}
+                        >
                             {showEventDetails ? (
                                 <EventDetails
                                     eventId={eventId}
@@ -390,12 +465,9 @@ export default function HomePage() {
                                 <>
                                     {loading ? (
                                         <div className="flex justify-center items-center py-16">
-                                            {/* <DotsLoadingAnimation size="lg" /> */}
-                                            <div className="z-20 ">
-                                            <LoadingComponent size="lg" />
+                                            <div className="z-20">
+                                                <LoadingComponent size="lg" />
                                             </div>
-                            
-                                            
                                         </div>
                                     ) : filteredEvents.length === 0 ? (
                                         <div className="text-center py-16">
@@ -426,14 +498,7 @@ export default function HomePage() {
                                     ) : (
                                         <div className="space-y-6">
                                             <div className="flex justify-between items-center">
-                                                <h2
-                                                    className={`text-2xl font-bold ${
-                                                        sharedString != 0 &&
-                                                        sharedString != 7
-                                                            ? "text_light"
-                                                            : "text_dark"
-                                                    } `}
-                                                >
+                                                <h2 className="text-2xl font-bold text-gray-800">
                                                     Discover Events
                                                     <span className="ml-2 text-sm font-normal bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full">
                                                         {filteredEvents.length}{" "}
@@ -583,41 +648,19 @@ export default function HomePage() {
                                                         </div>
 
                                                         {/* Like Button */}
-                                                        <div className="absolute top-3 left-3 flex items-center space-x-1">
-                                                            <button
-                                                                onClick={(e) =>
-                                                                    handleLike(
-                                                                        event.id,
-                                                                        e
-                                                                    )
-                                                                }
-                                                                className="p-2 rounded-full bg-white/90 shadow-sm hover:bg-gray-100 transition-colors"
-                                                            >
-                                                                <svg
-                                                                    className={`w-5 h-5 ${
-                                                                        likedEvents.includes(
-                                                                            event.id
-                                                                        )
-                                                                            ? "text-red-500 fill-red-500"
-                                                                            : "text-gray-400"
-                                                                    }`}
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    viewBox="0 0 24 24"
-                                                                >
-                                                                    <path
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                        strokeWidth="1.5"
-                                                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                                                                    ></path>
-                                                                </svg>
-                                                            </button>
-                                                            <span className="text-sm text-gray-600 bg-white/90 px-2 py-1 rounded-full">
-                                                                {event.likes_count ||
-                                                                    0}
-                                                            </span>
-                                                        </div>
+                                                        <LikesOption
+                                                            eventId={event.id}
+                                                            likesCount={
+                                                                event.likes_count
+                                                            }
+                                                            isLiked={
+                                                                event.is_liked
+                                                            }
+                                                            onLikeToggle={
+                                                                handleLike
+                                                            }
+                                                        />
+                                                        {console.log({events})}
                                                     </div>
                                                 ))}
                                             </div>

@@ -18,6 +18,8 @@ export default function EventsList() {
       const response = await fetch("http://127.0.0.1:8000/api/events", {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+
         },
       });
 
@@ -89,7 +91,7 @@ export default function EventsList() {
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-200 opacity-20 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto relative z-10">
+      <div className="container mx-auto  z-10">
         {/* Search Input */}
         <div className="mb-8">
           <div className="rounded-2xl" style={glassStyle}>

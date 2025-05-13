@@ -88,17 +88,17 @@ export default function UsersList() {
   };
   
   return (
-    <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-2">
       {/* Floating background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-200 opacity-20 blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto relative z-10">
+      <div className="container mx-auto  z-10">
         <div className="space-y-8">
           {/* Header Section */}
-          <div className="p-6 rounded-2xl" style={glassStyle}>
+          <div className="p-1 rounded-2xl" style={glassStyle}>
             <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
             <p className="text-lg text-gray-600 mt-2">
               Manage all registered users
@@ -106,7 +106,7 @@ export default function UsersList() {
           </div>
 
           {/* Search Bar */}
-          <div className="p-6 rounded-2xl" style={glassStyle}>
+          <div className=" rounded-2xl" style={glassStyle}>
             <div className="relative">
               <input
                 type="text"

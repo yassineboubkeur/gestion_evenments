@@ -61,7 +61,7 @@ export default function LoginForm({ onLoginSuccess ,miniLogin}) {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center bg${sharedString}`}>
+    <div className={`min-h-screen flex items-center justify-center ${sharedString ? 'bg' + sharedString : 'bg0'}`}>
       <div className="w-full max-w-6xl mx-auto rounded-xl bg-white/60 shadow-xl overflow-hidden">
         <div className={`grid grid-cols-1 ${!miniLogin && "md:grid-cols-2" }`}>
           {/* Left Column - Branding/Info */}

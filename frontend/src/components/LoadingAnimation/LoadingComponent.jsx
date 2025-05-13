@@ -40,7 +40,7 @@ const LoadingComponent = () => {
   const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8'];
   
   return (
-    <div className='z-50' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className='z-[1000]' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <LoadingContainer>
         {colors.map((color, index) => (
           <LoadingLine 
@@ -50,7 +50,7 @@ const LoadingComponent = () => {
           />
         ))}
       </LoadingContainer>
-      <LoadingText>Loading...</LoadingText>
+      <LoadingText><strong>Loading...</strong> </LoadingText>
     </div>
   );
 };

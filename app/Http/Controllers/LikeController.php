@@ -69,4 +69,45 @@ class LikeController extends Controller
             'liked_events' => $user->likedEvents()->with('organizer')->get()
         ]);
     }
+
+    public function toggleLike(Event $event)
+{
+    $user = auth()->user();
+    
+    if (!$user) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
+    try {
+        // Check if user already liked the event
+        $alreadyLiked = $user->likedEvents()
+                           ->where('event_id', $event->id)
+                           ->exists();
+        
+        if ($alreadyLiked) {
+            $user->likedEvents()->detach($event->id);
+            $liked = false;
+        } else {
+            $user->likedEvents()->attach($event->id);
+            $liked = true;
+        }
+
+        // Get updated likes count
+        $likesCount = $event->likes()->count();
+
+        return response()->json([
+            'success' => true,
+            'liked' => $liked,
+            'likes_count' => $likesCount
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Like error: '.$e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to toggle like',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,17 +22,17 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 |
 */
 
+
 // Public routes
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-
 Route::get('allevents', [EventController::class, 'allEvents']);
+Route::get('events/{event}', [EventController::class, 'showPublic']);
 
-
+// Authenticated routes
 Route::middleware(['auth:sanctum'])->group(function () {
-
     Route::post('/payments/verify', [EventController::class, 'verifyPayment']);
-
+    
     // Common authenticated user routes
     Route::get('/user', function (Request $request) {
         return response()->json([
@@ -51,11 +52,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Organizer routes
     Route::middleware(['role:organizer'])->group(function () {
-        Route::apiResource('events', EventController::class)->except(['index']);
+        Route::post('/events', [EventController::class, 'store']);
+        Route::put('/events/{event}', [EventController::class, 'update']);
+        Route::patch('/events/{event}', [EventController::class, 'update']);
+        Route::delete('/events/{event}', [EventController::class, 'destroy']);
         Route::get('/my-events', [EventController::class, 'myEvents']);
-
         Route::get('/organizer/stats', [EventController::class, 'stats']);
-
     });
 
     // Admin routes
@@ -63,26 +65,101 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('users', UserController::class);
         Route::post('/users/{user}/assign-role', [UserController::class, 'assignRole']);
         Route::get('/system-metrics', [AdminController::class, 'metrics']);
-        Route::apiResource('events', EventController::class);
-        Route::delete('/admin/events/{event}', [AdminEventController::class, 'destroy']);
-
+        Route::apiResource('admin/events', AdminEventController::class);
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
     });
-
-
-    // Likes 
+    Route::middleware(['auth:sanctum', 'role:participant|organizer|admin'])->group(function () {
+        Route::get('/events', [EventController::class, 'index']);
+    });
+    // Likes routes (accessible to all authenticated users)
     Route::prefix('events/{event}/likes')->group(function () {
         Route::post('/', [LikeController::class, 'like']);
         Route::delete('/', [LikeController::class, 'unlike']);
         Route::get('/check', [LikeController::class, 'checkLike']);
         Route::get('/count', [LikeController::class, 'likesCount']);
     });
-
+    
     Route::get('/user/likes', [LikeController::class, 'userLikes']);
+
+    // Route::post('/events/{event}/toggle-like', [EventController::class, 'toggleLike']);
+    Route::post('/events/{event}/toggle-like', [EventController::class, 'toggleLike']);
 });
 
-Route::middleware(['role:organizer|admin'])->group(function () {
-    Route::post('/', [EventController::class, 'store']);
-    Route::put('/{event}', [EventController::class, 'update']);
-    Route::patch('/{event}', [EventController::class, 'update']);
-});
-Route::get('events/{event}', [EventController::class, 'showPublic']);
+
+
+
+
+
+// **************************************
+
+// // Public routes
+// Route::post('/register', [RegisteredUserController::class, 'store']);
+// Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
+// Route::get('allevents', [EventController::class, 'allEvents']);
+
+
+// Route::middleware(['auth:sanctum'])->group(function () {
+
+//     Route::post('/payments/verify', [EventController::class, 'verifyPayment']);
+
+//     // Common authenticated user routes
+//     Route::get('/user', function (Request $request) {
+//         return response()->json([
+//             'user' => $request->user(),
+//             'roles' => $request->user()->getRoleNames(),
+//             'permissions' => $request->user()->getAllPermissions()->pluck('name')
+//         ]);
+//     });
+
+//     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+
+//     // Participant routes
+//     Route::middleware(['role:participant'])->group(function () {
+//         Route::get('/events', [EventController::class, 'index']);
+//         Route::post('/events/{event}/register', [EventController::class, 'register']);
+//     });
+
+//     // Organizer routes
+//     Route::middleware(['role:organizer'])->group(function () {
+//         Route::apiResource('events', EventController::class)->except(['index']);
+//         Route::get('/my-events', [EventController::class, 'myEvents']);
+
+//         Route::get('/organizer/stats', [EventController::class, 'stats']);
+
+//     });
+
+//     // Admin routes
+//     Route::middleware(['role:admin'])->group(function () {
+//         Route::apiResource('users', UserController::class);
+//         Route::post('/users/{user}/assign-role', [UserController::class, 'assignRole']);
+//         Route::get('/system-metrics', [AdminController::class, 'metrics']);
+//         Route::apiResource('events', EventController::class);
+//         Route::delete('/admin/events/{event}', [AdminEventController::class, 'destroy']);
+
+//         // notification
+
+//         Route::get('/notifications', [NotificationController::class, 'index']);
+//         Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+
+//     });
+
+
+//     // Likes 
+//     Route::prefix('events/{event}/likes')->group(function () {
+//         Route::post('/', [LikeController::class, 'like']);
+//         Route::delete('/', [LikeController::class, 'unlike']);
+//         Route::get('/check', [LikeController::class, 'checkLike']);
+//         Route::get('/count', [LikeController::class, 'likesCount']);
+//     });
+
+//     Route::get('/user/likes', [LikeController::class, 'userLikes']);
+// });
+
+// Route::middleware(['role:organizer|admin'])->group(function () {
+//     Route::post('/', [EventController::class, 'store']);
+//     Route::put('/{event}', [EventController::class, 'update']);
+//     Route::patch('/{event}', [EventController::class, 'update']);
+// });
+// Route::get('events/{event}', [EventController::class, 'showPublic']);

@@ -101,7 +101,7 @@ export default function RegisterForm({ onRegisterSuccess, miniRegister }) {
     const maxDateString = maxDate.toISOString().split('T')[0];
 
     return (
-        <div className={`min-h-screen flex items-center justify-center bg${sharedString}`}>
+        <div className={`min-h-screen flex items-center justify-center ${sharedString ? 'bg' + sharedString : 'bg0'}`}>
             <div className="w-full max-w-6xl mx-auto rounded-xl bg-white/60 shadow-xl overflow-hidden">
                 <div className={`grid grid-cols-1 ${!miniRegister && "md:grid-cols-2"}`}>
                     {/* Left Column - Branding/Info */}

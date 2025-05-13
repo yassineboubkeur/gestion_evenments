@@ -74,6 +74,32 @@
     background-size: cover; /* or 'contain' depending on your needs */
     background-position: center;
 }
+
+.bg10 {
+    background-image: url('bg10.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+
+.bg11 {
+    background-image: url('bg11.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg12 {
+    background-image: url('bg12.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
+.bg13 {
+    background-image: url('bg13.png');
+    background-repeat: no-repeat;
+    background-size: cover; /* or 'contain' depending on your needs */
+    background-position: center;
+}
 .text_dark{
     color: rgb(15, 15, 15);
 }

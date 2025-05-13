@@ -12,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+    use HasFactory, Notifiable, HasRoles, HasApiTokens,Notifiable;
 
     protected $fillable = [
         'name',
@@ -66,4 +66,6 @@ class User extends Authenticatable implements MustVerifyEmail
     return $this->belongsToMany(Event::class, 'event_likes', 'user_id', 'event_id')
                ->withTimestamps();
 }
+
+
 }

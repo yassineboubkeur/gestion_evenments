@@ -75,7 +75,7 @@ export default function AdminLayout() {
                 <aside 
                     className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
                     md:translate-x-0 transform transition-transform duration-200 ease-in-out
-                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-900 bg-opacity-70 
+                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-900 bg-opacity-90 
                     text-white md:m-8 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
                 >
                     <div className="mb-8">

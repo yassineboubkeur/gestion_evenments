@@ -15,7 +15,7 @@ export default function ThemeBg({path =".."}){
     
     return (
         <div className="flex flex-wrap justify-center  max-w-[360px] mx-auto">
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13].map((i) => (
           <button
             key={i}
             className="transition-transform duration-300 ease-in-out hover:scale-110 p-1"

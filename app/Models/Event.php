@@ -46,6 +46,7 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'event_likes', 'event_id', 'user_id')
             ->withTimestamps();
     }
+    
 
     // Registrations relationship (one-to-many)
     public function registrations()

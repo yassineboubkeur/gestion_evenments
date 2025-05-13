@@ -117,6 +117,7 @@ export default function EventForm({ miniEventForm }) {
         method,
         headers: {
           'Authorization': `Bearer ${getToken()}`,
+          //  'Content-Type': 'multipart/form-data'
         },
         body: data,
       });
