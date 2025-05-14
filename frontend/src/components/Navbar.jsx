@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // import { useAuth } from '../context/AuthContext';
 // import axios from 'axios';
+import axios from 'axios';
+
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -106,6 +108,35 @@ const Navbar = () => {
     }
   };
 
+const logout = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await axios.post(
+      'http://127.0.0.1:8000/api/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+
+    // Clear token from localStorage
+    localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('permissions');
+
+    // Optional: redirect or update state
+    console.log('Logged out:', response.data);
+  } catch (error) {
+    console.error('Logout error:', error.response?.data || error.message);
+  }
+};
+
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -148,8 +179,10 @@ const Navbar = () => {
             ))}
             
             {/* Notification Icon */}
-            {user && (
+            {user?.roles[0].name === "admin" && (
+              
               <div className="relative">
+                {/* {console.log(user)} */}
                 <button 
                   onClick={handleNotificationClick}
                   className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-300 relative"
@@ -282,7 +315,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden space-x-4">
             {/* Mobile Notification Icon */}
-            {user && (
+            {user?.roles[0].name === "admin" && (
               <button 
                 onClick={handleNotificationClick}
                 className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-300 relative"
@@ -355,7 +388,8 @@ const Navbar = () => {
                 {user ? (
                   <div className="flex items-center px-3 py-2 space-x-3 border-b border-gray-100 pb-4">
                     <img
-                      src={user.image || 'https://randomuser.me/api/portraits/men/1.jpg'}
+                      src={"http://127.0.0.1:8000/storage/"+user?.profile_image
+                        || 'https://randomuser.me/api/portraits/men/1.jpg'}
                       alt={user.name}
                       className="w-10 h-10 rounded-full object-cover border-2 border-cyan-500"
                     />

@@ -286,6 +286,7 @@ class EventController extends Controller
                     'name' => $event->name
                 ]
             ]);
+            // logic pour enregistrer le document dans une table : confirmationdoc : id , id_user , id-event , path .....     (new endpoint)
         } catch (\Exception $e) {
             Log::error('Email sending failed: ' . $e->getMessage());
             Log::error('Email failed to send: ' . $e->getMessage());

@@ -49,14 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/events', [EventController::class, 'index']);
         Route::post('/events/{event}/register', [EventController::class, 'register']);
 
-        // Route::get('/participant/registrations', function (Request $request) {
-        //     $registrations = $request->user()->registrations()
-        //         ->with('event')
-        //         ->get()
-        //         ->pluck('event');
-    
-        //     return response()->json($registrations);
-        // });
+       
         Route::get('/participant/registrations', [EventController::class, 'registrations']);
     });
 
