@@ -4,9 +4,10 @@ import Navbar from "./Navbar";
 import EventDetails from "./EventDetails";
 import { useStyle } from "../context/StyleContext";
 import ThemeBg from "./ThemeBg";
-import LoadingComponent from "./LoadingAnimation/LoadingComponent";
 import { useRefresh } from "../context/RefreshContext";
 import LikesOption from "./LikesOption";
+import DotsLoadingAnimation from "./LoadingAnimation/LoadingAnimation";
+import AllEvents from "./AllEvents";
 
 export default function HomePage() {
     const [events, setEvents] = useState([]);
@@ -47,53 +48,32 @@ export default function HomePage() {
             const token = localStorage.getItem("token");
             const headers = {};
             if (token) headers["Authorization"] = `Bearer ${token}`;
-    
+
             setLoading(true);
             const response = await fetch(
                 "http://127.0.0.1:8000/api/allevents",
                 { headers }
             );
-    
+
             if (!response.ok) throw new Error("Failed to fetch events");
-    
+
             const data = await response.json();
-            
+
             // Ensure is_liked is properly set (default to false if not present)
             const eventsWithLikes = (data.data || data).map((event) => ({
                 ...event,
                 is_liked: event.is_liked || false,
             }));
-            
+
             setEvents(eventsWithLikes);
             setLoading(false);
-            console.log("Fetched events with likes:", eventsWithLikes);
+            // console.log("Fetched events with likes:", eventsWithLikes);
         } catch (error) {
             console.error("Error fetching events:", error);
             setLoading(false);
         }
     };
-    // const fetchEvents = async () => {
-    //     try {
-    //         const token = localStorage.getItem("token");
-    //         const headers = {};
-    //         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    //         setLoading(true);
-    //         const response = await fetch(
-    //             "http://127.0.0.1:8000/api/allevents",
-    //             { headers }
-    //         );
-
-    //         if (!response.ok) throw new Error("Failed to fetch events");
-
-    //         const data = await response.json();
-    //         setEvents(data.data || data);
-    //         setLoading(false);
-    //     } catch (error) {
-    //         console.error("Error fetching events:", error);
-    //         setLoading(false);
-    //     }
-    // };
     const handleLike = async (eventId) => {
         try {
             const token = localStorage.getItem("token");
@@ -118,7 +98,7 @@ export default function HomePage() {
             if (!response.ok) {
                 throw new Error(data.message || "Failed to update like");
             }
-            console.log(data)
+            // console.log(data);
             // Update both likes_count and is_liked
             setEvents((prevEvents) =>
                 prevEvents.map((event) =>
@@ -136,52 +116,6 @@ export default function HomePage() {
             alert(error.message || "Failed to update like");
         }
     };
-    // const handleLike = async (eventId) => {
-    //     try {
-    //         const token = localStorage.getItem("token");
-    //         if (!token) {
-    //             // Redirect to login or show error
-    //             navigate('/login');
-    //             return;
-    //         }
-
-    //         const response = await fetch(
-    //             `http://127.0.0.1:8000/api/events/${eventId}/toggle-like`,
-    //             {
-    //                 method: "POST",
-    //                 headers: {
-    //                     "Authorization": `Bearer ${token}`,
-    //                     "Content-Type": "application/json",
-    //                 },
-    //             }
-    //         );
-
-    //         if (!response.ok) {
-    //             const errorData = await response.json();
-    //             throw new Error(errorData.message || "Failed to update like");
-    //         }
-
-    //         const data = await response.json();
-
-    //         // Update the UI immediately (optimistic update)
-    //         setEvents(prevEvents =>
-    //             prevEvents.map(event =>
-    //                 event.id === eventId
-    //                     ? {
-    //                         ...event,
-    //                         likes_count: data.likes_count,
-    //                         is_liked: data.liked
-    //                     }
-    //                     : event
-    //             )
-    //         );
-
-    //     } catch (error) {
-    //         console.error("Error toggling like:", error);
-    //         // Optionally show error to user
-    //         alert(error.message || "Failed to update like");
-    //     }
-    // };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -256,7 +190,7 @@ export default function HomePage() {
                                                     alt="profileimg"
                                                 />
                                                 <div className="truncate">
-                                                    <p className="font-medium text-sm text-gray-800 truncate">
+                                                    <p className="font-medium text-md text-gray-800 truncate">
                                                         {user?.name}
                                                     </p>
                                                     <p className="text-xs text-gray-600 truncate">
@@ -276,7 +210,7 @@ export default function HomePage() {
                                                         `/${userrole}/dashboard`
                                                     )
                                                 }
-                                                className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full hover:opacity-90 transition font-semibold flex items-center justify-center shadow-sm"
+                                                className="px-3 py-1.5 text-md bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full hover:opacity-90 transition font-semibold flex items-center justify-center shadow-sm"
                                             >
                                                 <svg
                                                     className="w-3 h-3 mr-1"
@@ -295,7 +229,7 @@ export default function HomePage() {
                                             </button>
                                             <button
                                                 onClick={handleLogout}
-                                                className="px-3 py-1.5 text-sm bg-white/80 border border-red-500/30 text-red-500 rounded-full font-semibold hover:bg-red-50 transition flex items-center justify-center shadow-sm"
+                                                className="px-3 py-1.5 text-md bg-white/80 border border-red-500/30 text-red-500 rounded-full font-semibold hover:bg-red-50 transition flex items-center justify-center shadow-sm"
                                             >
                                                 <svg
                                                     className="w-3 h-3 mr-1"
@@ -318,7 +252,7 @@ export default function HomePage() {
                                     <div className="grid grid-cols-2 gap-2">
                                         <Link
                                             to="/login"
-                                            className="px-3 py-1.5 text-sm bg-gradient-to-r from-indigo-600 font-semibold to-blue-600 text-white rounded-full hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                            className="px-3 py-1.5 text-md bg-gradient-to-r from-indigo-600 font-semibold to-blue-600 text-white rounded-full hover:opacity-90 transition flex items-center justify-center shadow-sm"
                                         >
                                             <svg
                                                 className="w-3 h-3 mr-1"
@@ -337,7 +271,7 @@ export default function HomePage() {
                                         </Link>
                                         <Link
                                             to="/register"
-                                            className="px-3 py-1.5 text-sm bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center shadow-sm"
+                                            className="px-3 py-1.5 text-md bg-gradient-to-r from-green-600 to-teal-500 text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center shadow-sm"
                                         >
                                             <svg
                                                 className="w-3 h-3 mr-1"
@@ -380,7 +314,7 @@ export default function HomePage() {
                                         <input
                                             type="text"
                                             placeholder="Search..."
-                                            className="w-full p-2 pl-8 text-sm bg-white/80 border border-white/30 rounded-lg focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 transition-all backdrop-blur-sm"
+                                            className="w-full p-2 pl-8 text-md bg-white/80 border border-white/30 rounded-full outline-0 focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 transition-all backdrop-blur-sm"
                                             value={searchTerm}
                                             onChange={(e) =>
                                                 setSearchTerm(e.target.value)
@@ -423,7 +357,7 @@ export default function HomePage() {
                                         Filter
                                     </h2>
                                     <select
-                                        className="w-full p-2 text-sm bg-white/80 border border-white/30 rounded-lg focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 transition-all appearance-none backdrop-blur-sm"
+                                        className="w-full p-2 text-md bg-white/80 border border-white/30 outline-0 rounded-full focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 transition-all appearance-none backdrop-blur-sm"
                                         value={categoryFilter}
                                         onChange={(e) =>
                                             setCategoryFilter(e.target.value)
@@ -445,7 +379,11 @@ export default function HomePage() {
                                         <option value="Sports">Sports</option>
                                     </select>
                                 </div>
+                                <div className="p-6">
+
                                 <ThemeBg />
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -462,291 +400,18 @@ export default function HomePage() {
                                     onBack={() => handleBackToEvents(false)}
                                 />
                             ) : (
-                                <>
-                                    {loading ? (
-                                        <div className="flex justify-center items-center py-16">
-                                            <div className="z-20">
-                                                <LoadingComponent size="lg" />
-                                            </div>
-                                        </div>
-                                    ) : filteredEvents.length === 0 ? (
-                                        <div className="text-center py-16">
-                                            <div className="mx-auto w-24 h-24 text-gray-400 mb-4">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={1.5}
-                                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                    />
-                                                </svg>
-                                            </div>
-                                            <h3 className="text-xl font-medium text-gray-700 mb-2">
-                                                No events found
-                                            </h3>
-                                            <p className="text-gray-500 max-w-md mx-auto">
-                                                Try adjusting your search or
-                                                filters to find what you're
-                                                looking for.
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-6">
-                                            <div className="flex justify-between items-center">
-                                                <h2 className="text-2xl font-bold text-gray-800">
-                                                    Discover Events
-                                                    <span className="ml-2 text-sm font-normal bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full">
-                                                        {filteredEvents.length}{" "}
-                                                        {filteredEvents.length ===
-                                                        1
-                                                            ? "event"
-                                                            : "events"}
-                                                    </span>
-                                                </h2>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                {currentEvents.map((event) => (
-                                                    <div
-                                                        key={event.id}
-                                                        className="bg-white/80 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full group relative cursor-pointer backdrop-blur-sm"
-                                                        onClick={() => {
-                                                            setShowEventDetails(
-                                                                true
-                                                            );
-                                                            setEventId(
-                                                                event.id
-                                                            );
-                                                        }}
-                                                    >
-                                                        <div className="relative h-56 overflow-hidden">
-                                                            <img
-                                                                src={`http://127.0.0.1:8000/storage/${event.image}`}
-                                                                alt={event.name}
-                                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                            />
-                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                                                            <div className="absolute top-3 right-3">
-                                                                <span className="bg-white/90 text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-                                                                    {
-                                                                        event.category
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                            <div className="absolute bottom-3 left-3">
-                                                                <span className="text-white font-medium">
-                                                                    {event.price
-                                                                        ? `$${event.price}`
-                                                                        : "Free"}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div className="p-5 flex-grow flex flex-col">
-                                                            <div className="mb-2">
-                                                                <h3 className="text-xl font-semibold text-gray-800 line-clamp-1">
-                                                                    {event.name}
-                                                                </h3>
-                                                                <div className="flex items-center text-gray-500 mt-1 text-sm">
-                                                                    <svg
-                                                                        className="w-4 h-4 mr-1"
-                                                                        fill="none"
-                                                                        stroke="currentColor"
-                                                                        viewBox="0 0 24 24"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                                                        ></path>
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                                                        ></path>
-                                                                    </svg>
-                                                                    <span>
-                                                                        {
-                                                                            event.address
-                                                                        }
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="flex items-center text-gray-600 mb-3 text-sm">
-                                                                <svg
-                                                                    className="w-4 h-4 mr-1"
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    viewBox="0 0 24 24"
-                                                                >
-                                                                    <path
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                        strokeWidth="2"
-                                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                                    ></path>
-                                                                </svg>
-                                                                <span>
-                                                                    {new Date(
-                                                                        event.date
-                                                                    ).toLocaleDateString(
-                                                                        "en-US",
-                                                                        {
-                                                                            month: "short",
-                                                                            day: "numeric",
-                                                                            hour: "2-digit",
-                                                                            minute: "2-digit",
-                                                                        }
-                                                                    )}
-                                                                </span>
-                                                            </div>
-
-                                                            <p className="text-gray-600 mb-4 line-clamp-2 text-sm">
-                                                                {
-                                                                    event.description
-                                                                }
-                                                            </p>
-
-                                                            <div className="mt-auto flex justify-between items-center">
-                                                                <button
-                                                                    onClick={(
-                                                                        e
-                                                                    ) => {
-                                                                        e.stopPropagation();
-                                                                        setShowEventDetails(
-                                                                            true
-                                                                        );
-                                                                        setEventId(
-                                                                            event.id
-                                                                        );
-                                                                    }}
-                                                                    className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center transition-colors text-sm"
-                                                                >
-                                                                    View Details
-                                                                    <svg
-                                                                        className="w-4 h-4 ml-1"
-                                                                        fill="none"
-                                                                        stroke="currentColor"
-                                                                        viewBox="0 0 24 24"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M9 5l7 7-7 7"
-                                                                        ></path>
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Like Button */}
-                                                        <LikesOption
-                                                            eventId={event.id}
-                                                            likesCount={
-                                                                event.likes_count
-                                                            }
-                                                            isLiked={
-                                                                event.is_liked
-                                                            }
-                                                            onLikeToggle={
-                                                                handleLike
-                                                            }
-                                                        />
-                                                        {console.log({events})}
-                                                    </div>
-                                                ))}
-                                            </div>
-
-                                            {/* Pagination */}
-                                            {filteredEvents.length >
-                                                eventsPerPage && (
-                                                <div className="flex justify-center mt-8">
-                                                    <nav className="inline-flex rounded-md shadow-sm">
-                                                        <button
-                                                            onClick={() =>
-                                                                paginate(
-                                                                    Math.max(
-                                                                        1,
-                                                                        currentPage -
-                                                                            1
-                                                                    )
-                                                                )
-                                                            }
-                                                            disabled={
-                                                                currentPage ===
-                                                                1
-                                                            }
-                                                            className={`px-4 py-2 rounded-l-md border ${
-                                                                currentPage ===
-                                                                1
-                                                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                                                    : "bg-white text-gray-700 hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            Previous
-                                                        </button>
-
-                                                        {Array.from(
-                                                            {
-                                                                length: totalPages,
-                                                            },
-                                                            (_, i) => i + 1
-                                                        ).map((number) => (
-                                                            <button
-                                                                key={number}
-                                                                onClick={() =>
-                                                                    paginate(
-                                                                        number
-                                                                    )
-                                                                }
-                                                                className={`px-4 py-2 border-t border-b ${
-                                                                    currentPage ===
-                                                                    number
-                                                                        ? "bg-indigo-600 text-white"
-                                                                        : "bg-white text-gray-700 hover:bg-gray-50"
-                                                                }`}
-                                                            >
-                                                                {number}
-                                                            </button>
-                                                        ))}
-
-                                                        <button
-                                                            onClick={() =>
-                                                                paginate(
-                                                                    Math.min(
-                                                                        totalPages,
-                                                                        currentPage +
-                                                                            1
-                                                                    )
-                                                                )
-                                                            }
-                                                            disabled={
-                                                                currentPage ===
-                                                                totalPages
-                                                            }
-                                                            className={`px-4 py-2 rounded-r-md border ${
-                                                                currentPage ===
-                                                                totalPages
-                                                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                                                    : "bg-white text-gray-700 hover:bg-gray-50"
-                                                            }`}
-                                                        >
-                                                            Next
-                                                        </button>
-                                                    </nav>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </>
+                                <AllEvents
+                                    loading={loading}
+                                    filteredEvents={filteredEvents}
+                                    currentEvents={currentEvents}
+                                    eventsPerPage={eventsPerPage}
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    paginate={paginate}
+                                    setShowEventDetails={setShowEventDetails}
+                                    setEventId={setEventId}
+                                    handleLike={handleLike}
+                                />
                             )}
                         </div>
                     </div>

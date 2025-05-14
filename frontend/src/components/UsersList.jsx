@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useNotification } from '../context/NotificationContext';
 
 export default function UsersList() {
   const [users, setUsers] = useState([]);
@@ -7,7 +8,7 @@ export default function UsersList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 6;
-
+const { notifications ,addNotification} = useNotification();
   // Glassmorphism style
   const glassStyle = {
     background: 'rgba(255, 255, 255, 0.15)',
@@ -33,6 +34,7 @@ export default function UsersList() {
 
         const data = await response.json();
         setUsers(data);
+        // console.log(data)
       } catch (error) {
         console.error('Error fetching users:', error);
       } finally {
@@ -81,14 +83,16 @@ export default function UsersList() {
       
       // Remove user from UI
       setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+      addNotification("User deleted successfully","success")
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Failed to delete user');
+      addNotification("Error deleting user","error")
+
     }
   };
   
   return (
-    <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-2">
+    <div className="min-h-screen rounded-xl  p-2">
       {/* Floating background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>
@@ -140,9 +144,7 @@ export default function UsersList() {
                 {currentUsers.map(user => (
                   <div key={user.id} className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all">
                     <div className="flex items-center mb-4">
-                      <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold mr-3">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
+                    <img className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold mr-3" src={"http://127.0.0.1:8000/storage/"+user?.profile_image} alt="profile photo" />
                       <div>
                         <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
                         <p className="text-sm text-gray-600">{user.email}</p>

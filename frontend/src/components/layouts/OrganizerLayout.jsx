@@ -3,12 +3,13 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
 import { useStyle } from "../../context/StyleContext";
 import ThemeBg from "../ThemeBg";
+// import StatsRegistration from "../StatsRegistration";
 
 export default function OrganizerLayout() {
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { updateSharedString, sharedString } = useStyle();
-
+    const [showStats, setShowStats] = useState(false);
     const navItems = [
         { 
             label: "Dashboard", 
@@ -37,6 +38,10 @@ export default function OrganizerLayout() {
                 </svg>
             )
         },
+        
+
+       
+
         { 
             label: "Logout", 
             path: "/logout",
@@ -49,7 +54,7 @@ export default function OrganizerLayout() {
     ];
 
     return (
-        <div className={`min-h-screen bg${sharedString}`}>
+        <div className={`min-h-screen ${sharedString ? `bg${sharedString}`: "bg11"}`}>
             <Navbar />
             
             {/* Mobile menu button */}
@@ -74,8 +79,8 @@ export default function OrganizerLayout() {
                     <aside 
                         className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
                         md:translate-x-0 transform transition-transform duration-200 ease-in-out
-                        fixed md:static inset-y-0 left-0 z-40 w-64 bg-blue-600 bg-opacity-70
-                        text-white md:m-8 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
+                        fixed md:static inset-y-0 left-0 z-40 w-64 bg-blue-600 bg-opacity-90  max-md:bg-opacity-100  md:rounded-xl
+                        text-white md:m-8 p-6 shadow-lg min-h-[calc(100vh-10rem)]`}
                     >
                         <div className="mb-8">
                             <h2 className="text-2xl font-bold tracking-wide text-white flex items-center">
@@ -95,9 +100,9 @@ export default function OrganizerLayout() {
                                         <Link
                                             to={path}
                                             onClick={() => setSidebarOpen(false)}
-                                            className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200 ${
+                                            className={`flex items-center px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${
                                                 location.pathname === path
-                                                    ? "bg-blue-600 text-white shadow"
+                                                    ? "bg-blue-800 text-white shadow"
                                                     : "hover:bg-gray-700 hover:text-white text-gray-300"
                                             }`}
                                         >
@@ -107,6 +112,29 @@ export default function OrganizerLayout() {
                                     </li>
                                 ))}
                             </ul>
+                             {/* <button
+                                            onClick={() => setShowStats(true)}
+                                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center"
+                                        >
+                                            <svg
+                                                className="w-4 h-4 mr-2"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                                />
+                                            </svg>
+                                            Show Registration Stats
+                                        </button>
+
+                                        {showStats && (
+                <StatsRegistration onClose={() => setShowStats(false)} />
+            )} */}
                         </nav>
                         <ThemeBg/>
                     </aside>
@@ -114,7 +142,7 @@ export default function OrganizerLayout() {
 
                 {/* Main Content */}
                 <main className="flex-1 rounded-xl md:p-8 overflow-y-auto mt-16 md:mt-0">
-                    <div className="bg-white p-2 rounded-xl shadow-sm min-h-[calc(100vh-10rem)]">
+                    <div className="bg-white bg-opacity-90 p-2 rounded-xl shadow-sm min-h-[calc(100vh-10rem)]">
                         <Outlet />
                     </div>
                 </main>

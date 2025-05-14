@@ -53,7 +53,7 @@ export default function OrganizerEvents() {
         <h1 className="text-3xl font-bold">My Events</h1>
         <Link 
           to="/organizer/create-event"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 rounded-full bg-blue-500 text-white  hover:bg-blue-600"
         >
           Create New Event
         </Link>
@@ -112,12 +112,7 @@ export default function OrganizerEvents() {
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <Link 
-                to={`/organizer/events/${event.id}`}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Manage
-              </Link>
+            
               <Link 
                 to={`/organizer/events/${event.id}/participants`}
                 className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"

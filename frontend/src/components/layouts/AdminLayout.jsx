@@ -50,7 +50,7 @@ export default function AdminLayout() {
     ];
 
     return (
-        <div className={`min-h-screen bg${sharedString }`}>
+        <div className={`min-h-screen ${sharedString ? `bg${sharedString}`: "bg11"}`}>
             <Navbar />
             
             {/* Mobile menu button */}
@@ -75,8 +75,8 @@ export default function AdminLayout() {
                 <aside 
                     className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
                     md:translate-x-0 transform transition-transform duration-200 ease-in-out
-                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-900 bg-opacity-90 
-                    text-white md:m-8 p-6 rounded-xl shadow-lg min-h-[calc(100vh-10rem)]`}
+                    fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-900 bg-opacity-90 max-md:bg-opacity-100  md:rounded-xl
+                    text-white md:m-8 p-6  shadow-lg min-h-[calc(100vh-10rem)]`}
                 >
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold tracking-wide text-white">
@@ -92,9 +92,9 @@ export default function AdminLayout() {
                                     <Link
                                         to={path}
                                         onClick={() => setSidebarOpen(false)}
-                                        className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200 ${
+                                        className={`flex items-center px-4 py-2  transition-colors rounded-full font-semibold duration-200 ${
                                             location.pathname === path
-                                                ? "bg-blue-600 text-white shadow"
+                                                ? "bg-blue-600  text-white shadow"
                                                 : "hover:bg-gray-700 hover:text-white text-gray-300"
                                         }`}
                                     >
@@ -111,7 +111,7 @@ export default function AdminLayout() {
 
                 {/* Main Content */}
                 <main className="flex-1 rounded-xl  md:p-8 overflow-y-auto mt-16 md:mt-0">
-                    <div className="bg-white rounded-xl shadow-sm  min-h-[calc(100vh-10rem)]">
+                    <div className="bg-white bg-opacity-80 rounded-xl shadow-sm p-2  min-h-[calc(100vh-10rem)]">
                         <Outlet />
                     </div>
                 </main>

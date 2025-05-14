@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
+// import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
 import LoginForm from "./Login";
 import PaymentProcedure from "./PaymentProcedure";
 import { useLikes } from "../context/LikesContext";
 import { useStyle } from "../context/StyleContext";
-import LoadingComponent from "./LoadingAnimation/LoadingComponent";
+// import LoadingComponent from "./LoadingAnimation/LoadingComponent";
+import DotsLoadingAnimation from "./LoadingAnimation/LoadingAnimation";
 
 export default function EventDetails({ eventId, onBack }) {
     const { id } = useParams();
@@ -62,7 +63,7 @@ export default function EventDetails({ eventId, onBack }) {
         return (
             <div className="flex justify-center items-center min-h-[300px]">
                 {/* <LoadingAnimation size="lg" /> */}
-                <LoadingComponent/>
+                <DotsLoadingAnimation/>
             </div>
         );
     }
@@ -86,8 +87,16 @@ export default function EventDetails({ eventId, onBack }) {
 
     const isLiked = likedEvents.includes(event.id);
 
+    const isEventPast = () => {
+        if (!event?.date) return false;
+        const eventDate = new Date(event.date);
+        const now = new Date();
+        return eventDate < now;
+    };
+
+
     return (
-        <div className="min-h-screen ">
+         <div className="min-h-screen ">
             <div className="max-w-6xl mx-auto   rounded-2xl overflow-hidden  ">
                 {showPayment ? (
                     <PaymentProcedure
@@ -147,114 +156,123 @@ export default function EventDetails({ eventId, onBack }) {
 
                             {/* Details */}
                             <div className="overflow-y-auto pr-2">
-    <h1 className={`text-3xl font-bold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-2`}>
-        {event.name}
-    </h1>
+                                <h1 className={`text-3xl font-bold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-2`}>
+                                    {event.name}
+                                </h1>
 
-    <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
-        <svg
-            className="w-5 h-5 mr-2 text-gray-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-        </svg>
-        <span>{event.address}</span>
-    </div>
+                                <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
+                                    <svg
+                                        className="w-5 h-5 mr-2 text-gray-500"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                        />
+                                    </svg>
+                                    <span>{event.address}</span>
+                                </div>
 
-    <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-3`}>
-        <svg
-            className="w-5 h-5 mr-2 text-gray-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14"
-            />
-        </svg>
-        <span>
-            {new Date(event.date).toLocaleString(
-                "en-US",
-                {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                }
-            )}
-        </span>
-    </div>
+                                <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-3`}>
+                                    <svg
+                                        className="w-5 h-5 mr-2 text-gray-500"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14"
+                                        />
+                                    </svg>
+                                    <span>
+                                        {new Date(event.date).toLocaleString(
+                                            "en-US",
+                                            {
+                                                weekday: "short",
+                                                month: "short",
+                                                day: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            }
+                                        )}
+                                    </span>
+                                </div>
 
-    <div className="mb-3">
-        <h2 className={`text-xl font-semibold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
-            About
-        </h2>
-        <p className={`${sharedString !== 0 && sharedString !== 7 ? 'text_dark' : 'text_dark'} leading-relaxed`}>
-            {event.description}
-        </p>
-    </div>
+                                <div className="mb-3">
+                                    <h2 className={`text-xl font-semibold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
+                                        About
+                                    </h2>
+                                    <p className={`${sharedString !== 0 && sharedString !== 7 ? 'text_dark' : 'text_dark'} leading-relaxed`}>
+                                        {event.description}
+                                    </p>
+                                </div>
 
-    <div className={`mb-6 space-y-2 text-sm ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'}`}>
-        <div>
-            <strong>Organizer:</strong>{" "}
-            {event.organizer?.name || "N/A"}
-        </div>
-        <div>
-            <strong>Seats:</strong>{" "}
-            {event.available_places || "Unlimited"}
-        </div>
-        <div>
-            <strong>Duration:</strong>{" "}
-            {event.duration_minutes
-                ? `${event.duration_minutes} mins`
-                : "N/A"}
-        </div>
-    </div>
+                                <div className={`mb-6 space-y-2 text-sm ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'}`}>
+                                    <div>
+                                        <strong>Organizer:</strong>{" "}
+                                        {event.organizer?.name || "N/A"}
+                                    </div>
+                                    <div>
+                                        <strong>Seats:</strong>{" "}
+                                        {event.available_places || "Unlimited"}
+                                    </div>
+                                    <div>
+                                        <strong>Duration:</strong>{" "}
+                                        {event.duration_minutes
+                                            ? `${event.duration_minutes} mins`
+                                            : "N/A"}
+                                    </div>
+                                </div>
 
-    <div className="flex gap-4 mt-3">
-        <button
-            onClick={handleBookNow}
-            className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-600 transition shadow"
-        >
-            Book Now
-        </button>
-        <button
-            onClick={handleLike}
-            className={`p-3 rounded-lg transition ${
-                isLiked
-                    ? "bg-red-100 text-red-600 hover:bg-red-200"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-            }`}
-        >
-            <svg
-                className={`w-5 h-5 ${
-                    isLiked ? "fill-current" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-            >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
-            </svg>
-        </button>
-    </div>
-</div>
+                                <div className="flex gap-4 mt-3">
+                                    {isEventPast() ? (
+                                        <button
+                                            className="flex-1 py-3 bg-red-800 text-white font-medium rounded-lg shadow cursor-not-allowed"
+                                            disabled
+                                        >
+                                            Event Closed
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleBookNow}
+                                            className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-600 transition shadow"
+                                        >
+                                            Book Now
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={handleLike}
+                                        className={`p-3 rounded-lg transition ${
+                                            isLiked
+                                                ? "bg-red-100 text-red-600 hover:bg-red-200"
+                                                : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                                        }`}
+                                    >
+                                        <svg
+                                            className={`w-5 h-5 ${
+                                                isLiked ? "fill-current" : ""
+                                            }`}
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </>
                 )}

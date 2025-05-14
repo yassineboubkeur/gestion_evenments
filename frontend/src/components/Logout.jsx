@@ -9,7 +9,7 @@ export default function Logout() {
     const logout = async () => {
       try {
         // Make API call to invalidate token
-        await fetch('/api/logout', {
+        await fetch('http://127.0.0.1:8000/api/logout', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,

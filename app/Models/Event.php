@@ -19,13 +19,18 @@ class Event extends Model
         'duration_minutes',
         'price',
         'category',
-        'organizer_id'
+        'organizer_id',
+        'status'
+
     ];
 
     protected $casts = [
         'date' => 'datetime',
-        'price' => 'decimal:2'
+        'price' => 'decimal:2',
+         'status' => 'string'
     ];
+
+    
 
     protected $appends = ['likes_count'];
 

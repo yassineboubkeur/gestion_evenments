@@ -126,7 +126,7 @@ const PaymentProcedure = ({ event, onBack }) => {
     };
     // Rest of your existing PaymentProcedure component JSX
     return (
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden p-6">
+        <div className="w-full mx-auto bg-white bg-opacity-80 rounded-lg shadow-md overflow-hidden p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Complete Your Booking
         </h2>

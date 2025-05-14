@@ -114,37 +114,37 @@ export default function RegisterForm({ onRegisterSuccess, miniRegister }) {
                         <div className="space-y-6">
                             <div className="flex items-start">
                                 <div className="flex-shrink-0 mt-1">
-                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                                 <div className="ml-3">
                                     <p className="text-lg font-medium text-slate-800">Easy Event Management</p>
-                                    <p className="mt-1 text-blue-100">Create, manage, and track all your events in one place</p>
+                                    <p className="mt-1 text-blue-500">Create, manage, and track all your events in one place</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start">
                                 <div className="flex-shrink-0 mt-1">
-                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                                 <div className="ml-3">
                                     <p className="text-lg font-medium text-slate-800">Real-time Analytics</p>
-                                    <p className="mt-1 text-blue-100">Get insights into your event performance</p>
+                                    <p className="mt-1 text-blue-500">Get insights into your event performance</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start">
                                 <div className="flex-shrink-0 mt-1">
-                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                                 <div className="ml-3">
                                     <p className="text-lg font-medium text-slate-800">Secure & Reliable</p>
-                                    <p className="mt-1 text-blue-100">Your data is always protected</p>
+                                    <p className="mt-1 text-blue-500">Your data is always protected</p>
                                 </div>
                             </div>
                         </div>

@@ -54,6 +54,33 @@ export default function AdminDashboard() {
     fetchStats();
   }, []);
 
+
+  // In AdminDashboard.js
+const [pendingEvents, setPendingEvents] = useState(0);
+
+useEffect(() => {
+    const fetchPendingEvents = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://127.0.0.1:8000/api/pending-events', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch pending events');
+            
+            const data = await response.json();
+            setPendingEvents(data.length);
+            // console.log(data)
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+    
+    fetchPendingEvents();
+}, []);
   return (
     <div className={`min-h-screen `}>
       {/* Floating background elements */}
@@ -111,6 +138,15 @@ export default function AdminDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                 </svg>
               </Link>
+              {/* <Link 
+                to="/admin/events" 
+                className="mt-4 inline-flex items-center text-indigo-600 hover:text-indigo-800 transition-colors"
+              >
+                Manage events
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </Link> */}
             </div>
 
             {/* <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all">

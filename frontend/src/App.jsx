@@ -20,6 +20,10 @@ import ContactForm from './components/Contact';
 import BookingConfirmation from './components/BookingConfirmation';
 import UsersList from './components/UsersList';
 import EventsList from './components/EventsList';
+import NotificationToast from './components/NotificationToast';
+import StatsRegistration from './components/StatsRegistration';
+import ParticipantEvents from './components/Dashboard/ParticipantEvents';
+// import NotificationToast from './components/NotificationToast';
 
 function App() {
   return (
@@ -34,6 +38,7 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/logout" element={<Logout />} /> {/* Add this route */}
+          {/* <Route path="contact" element={<ContactForm />} /> */}
 
           {/* Admin routes - requires admin role */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
@@ -41,6 +46,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<UsersList />} />
               <Route path="events" element={<EventsList />} />
+
 
             </Route>
           </Route>
@@ -54,6 +60,8 @@ function App() {
                 <Route index element={<OrganizerEventsList />} />
                 <Route path="create" element={<EventForm />} />
                 <Route path=":id/edit" element={<EventForm />} />
+                <Route path="organizer_stats_registration" element={<StatsRegistration />} />
+
               </Route>
             </Route>
           </Route>
@@ -62,6 +70,7 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['participant']} />}>
             <Route path="/participant/*" element={<ParticipantLayout />}>
               <Route path="dashboard" element={<ParticipantDashboard />} />
+              <Route path="my-events" element={<ParticipantEvents />} />
               {/* Add more participant routes here */}
             </Route>
             <Route path="/booking-confirmation" element={<BookingConfirmation />} />
@@ -71,7 +80,9 @@ function App() {
           <Route path='contact' element={<ContactForm/>}></Route>
 
         </Routes>
+
       </div>
+      <NotificationToast/>
     </Router>
   );
 }

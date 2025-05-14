@@ -45,7 +45,7 @@ const BookingConfirmation = ({
   }
 
   return (
-    <div className="max-w-2xl mx-auto  p-6 bg-white rounded-xl shadow-md">
+    <div className="w-full mx-auto  p-6 bg-white rounded-xl shadow-md">
       <div className="mb-6">
         <h2 className="text-3xl font-bold text-green-600 mb-2">🎉 Booking Confirmed!</h2>
         <p className="text-gray-700">Thank you for your reservation. See the details below:</p>
