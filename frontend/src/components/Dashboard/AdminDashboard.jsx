@@ -82,7 +82,7 @@ useEffect(() => {
     fetchPendingEvents();
 }, []);
   return (
-    <div className={`min-h-screen `}>
+    <div className={`h-fit `}>
       {/* Floating background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>

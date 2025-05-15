@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNotification } from "../context/NotificationContext";
+import LoadingAnimationLitle from "./LoadingAnimation/LoadingAnimationLitle";
 
 export default function UsersList() {
     const [users, setUsers] = useState([]);
@@ -101,7 +102,7 @@ export default function UsersList() {
     };
 
     return (
-        <div className="min-h-screen rounded-xl  p-2">
+        <div className="h-fit rounded-xl  p-2">
             {/* Floating background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>
@@ -150,14 +151,15 @@ export default function UsersList() {
 
                     {/* Users List */}
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {[...Array(6)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm animate-pulse h-48"
-                                ></div>
-                            ))}
-                        </div>
+                        // <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        //     {[...Array(6)].map((_, i) => (
+                        //         <div
+                        //             key={i}
+                        //             className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm animate-pulse h-48"
+                        //         ></div>
+                        //     ))}
+                        // </div>
+                        <LoadingAnimationLitle/>
                     ) : filteredUsers.length === 0 ? (
                         <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm text-center">
                             <p className="text-gray-600">No users found</p>

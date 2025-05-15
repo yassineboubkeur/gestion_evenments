@@ -143,7 +143,7 @@ export default function EventsList() {
     };
 
     return (
-        <div className="min-h-screen rounded-2xl  p-6">
+        <div className="h-fit rounded-2xl  p-6">
             {/* Floating background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>

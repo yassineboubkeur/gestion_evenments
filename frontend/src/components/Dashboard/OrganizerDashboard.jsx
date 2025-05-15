@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getCurrentUser, getToken } from "../../utils/AuthenticatedUser";
@@ -129,7 +128,6 @@ export default function OrganizerDashboard() {
                         View Stats
                     </button>
                 </div>
-               
             </div>
 
             {/* Stats Cards */}
@@ -267,8 +265,6 @@ export default function OrganizerDashboard() {
                         </Link>
                     </div>
                 )}
-
-
             </div>
 
             {/* Stats Registration Modal */}
@@ -295,9 +291,12 @@ function StatsCard({ title, count, link, icon, color, loading }) {
                     <h3 className="text-lg font-medium text-gray-700">
                         {title}
                     </h3>
-                    <div className="text-3xl font-bold mt-2">
-                        {loading ? <LoadingAnimationLitle /> : count}
-                    </div>
+
+                    {loading ? (
+                        <LoadingAnimationLitle />
+                    ) : (
+                        <div className="text-3xl font-bold mt-2">{count}</div>
+                    )}
                 </div>
                 <div className={`p-2 rounded-lg bg-${color}-100 bg-opacity-50`}>
                     {icon}
@@ -504,10 +503,3 @@ function EventCard({ event }) {
         </div>
     );
 }
-
-
-
-
-
-
-

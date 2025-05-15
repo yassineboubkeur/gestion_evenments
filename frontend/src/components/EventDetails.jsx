@@ -37,6 +37,7 @@ export default function EventDetails({ eventId, onBack }) {
                 if (!res.ok) throw new Error("Failed to fetch event details");
                 const data = await res.json();
                 setEvent(data.data || data);
+                console.log(data.data)
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -105,7 +106,7 @@ export default function EventDetails({ eventId, onBack }) {
     };
 
     return (
-        <div className="min-h-screen ">
+        <div className=" h-fit">
             <div className="max-w-6xl mx-auto   rounded-2xl overflow-hidden  ">
                 {showPayment ? (
                     <PaymentProcedure

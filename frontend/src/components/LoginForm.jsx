@@ -24,10 +24,10 @@ async function loginUser(credentials) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("role", userRole);
-        localStorage.setItem(
-            "permissions",
-            JSON.stringify(data.user.permission_names)
-        );
+        // localStorage.setItem(
+        //     "permissions",
+        //     JSON.stringify(data.user.permission_names)
+        // );
 
         return data;
     } catch (error) {

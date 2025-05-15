@@ -10,7 +10,7 @@ export default function ThemeBg({ path = ".." }) {
     };
 
     const colorsBg = [
-        "rgb(33, 95, 4)",
+        "rgb(145, 193, 199)",
         "indigo",
         "rgb(7, 15, 14)",
         "rgb(29, 87, 211)",

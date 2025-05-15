@@ -25,24 +25,24 @@ class EventController extends Controller
 
         return response()->json($events);
     }
-    
+
 
     public function myEvents(Request $request)
-{
-    $events = Event::where('organizer_id', $request->user()->id)
-        ->withCount('registrations')
-        ->with('registrations') // Include registrations data
-        ->orderBy('date', 'desc')
-        ->get();
+    {
+        $events = Event::where('organizer_id', $request->user()->id)
+            ->withCount('registrations')
+            ->with('registrations') // Include registrations data
+            ->orderBy('date', 'desc')
+            ->get();
 
-    return response()->json($events);
-}
+        return response()->json($events);
+    }
 
     // Create a new event
 
     public function store(Request $request)
-{
-         $validator = Validator::make($request->all(), [
+    {
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'date' => 'required|date',
@@ -53,31 +53,31 @@ class EventController extends Controller
             'price' => 'required|numeric|min:0',
             'category' => 'required|string|max:255',
         ]);
-    
-    if ($validator->fails()) {
-        return response()->json($validator->errors(), 422);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $data = $validator->validated();
+        $data['organizer_id'] = $request->user()->id;
+        $data['status'] = 'pending'; // Set default status
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        $event = Event::create($data);
+
+        // Notify admins
+        $adminUsers = User::role('admin')->get();
+        Notification::send($adminUsers, new EventCreatedNotification($event, $request->user()));
+
+        return response()->json([
+            'message' => 'Event created successfully and pending admin approval',
+            'event' => $event
+        ], 201);
     }
-    
-    $data = $validator->validated();
-    $data['organizer_id'] = $request->user()->id;
-    $data['status'] = 'pending'; // Set default status
-    
-    if ($request->hasFile('image')) {
-        $data['image'] = $request->file('image')->store('events', 'public');
-    }
-    
-    $event = Event::create($data);
-    
-    // Notify admins
-    $adminUsers = User::role('admin')->get();
-    Notification::send($adminUsers, new EventCreatedNotification($event, $request->user()));
-    
-    return response()->json([
-        'message' => 'Event created successfully and pending admin approval',
-        'event' => $event
-    ], 201);
-}
-    
+
 
     // Get a specific event
     public function show(Event $event)
@@ -178,17 +178,17 @@ class EventController extends Controller
     {
         try {
             $events = Event::where('status', 'approved')
-            ->withCount('likes')
-            ->orderBy('date', 'desc')
-            ->get();
-    
+                ->withCount('likes')
+                ->orderBy('date', 'desc')
+                ->get();
+
             // Add is_liked flag if user is authenticated
             if (auth()->check()) {
                 $events->each(function ($event) {
                     $event->is_liked = $event->likes()->where('user_id', auth()->id())->exists();
                 });
             }
-    
+
             return response()->json([
                 'success' => true,
                 'data' => $events
@@ -202,12 +202,15 @@ class EventController extends Controller
         }
     }
 
-    public function showPublic(Event $event)
-    {
-        return response()->json([
-            'data' => $event
-        ]);
-    }
+   public function showPublic(Event $event)
+{
+    $event->load('organizer');
+
+    return response()->json([
+        'data' => $event
+    ]);
+}
+
     public function stats(Request $request)
     {
         $user = $request->user();
@@ -238,7 +241,7 @@ class EventController extends Controller
         ]);
     }
 
-    public function verifyPayment(Request $request )
+    public function verifyPayment(Request $request)
     {
         $validated = $request->validate([
             'event_id' => 'required|exists:events,id',
@@ -309,130 +312,132 @@ class EventController extends Controller
     // In EventController.php
 
     public function toggleLike(Event $event)
-{
-    $user = auth()->user();
-    
-    if (!$user) {
-        return response()->json(['message' => 'Unauthorized'], 401);
-    }
+    {
+        $user = auth()->user();
 
-    try {
-        $alreadyLiked = $user->likedEvents()
-                           ->where('event_id', $event->id)
-                           ->exists();
-        
-        if ($alreadyLiked) {
-            $user->likedEvents()->detach($event->id);
-            $liked = false;
-        } else {
-            $user->likedEvents()->attach($event->id);
-            $liked = true;
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        // Get updated likes count
-        $likesCount = $event->likes()->count();
+        try {
+            $alreadyLiked = $user->likedEvents()
+                ->where('event_id', $event->id)
+                ->exists();
 
-        return response()->json([
-            'success' => true,
-            'liked' => $liked,
-            'likes_count' => $likesCount
-        ]);
+            if ($alreadyLiked) {
+                $user->likedEvents()->detach($event->id);
+                $liked = false;
+            } else {
+                $user->likedEvents()->attach($event->id);
+                $liked = true;
+            }
 
-    } catch (\Exception $e) {
-        \Log::error('Like error: '.$e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to toggle like',
-            'error' => $e->getMessage()
-        ], 500);
+            // Get updated likes count
+            $likesCount = $event->likes()->count();
+
+            return response()->json([
+                'success' => true,
+                'liked' => $liked,
+                'likes_count' => $likesCount
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Like error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to toggle like',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
-   // In EventController.php
+    // In EventController.php
 
-// Get pending events
-public function pendingEvents()
-{
-    $events = Event::where('status', 'pending')
-        ->with('organizer')
-        ->orderBy('created_at', 'desc')
-        ->get();
-    
-    return response()->json($events);
-}
-
-// Approve an event
-public function approveEvent(Event $event)
-{
-    $event->update(['status' => 'approved']);
-    
-    // Notify the organizer
-    $event->organizer->notify(new EventApprovedNotification($event));
-    
-    return response()->json([
-        'message' => 'Event approved successfully',
-        'event' => $event
-    ]);
-}
-
-// Reject an event
-public function rejectEvent(Request $request, Event $event)
-{
-    $validated = $request->validate([
-        'reason' => 'required|string|max:500'
-    ]);
-    
-    $event->update([
-        'status' => 'rejected',
-        'rejection_reason' => $validated['reason']
-    ]);
-    
-    // Notify the organizer
-    $event->organizer->notify(new EventRejectedNotification($event, $validated['reason']));
-    
-    return response()->json([
-        'message' => 'Event rejected successfully',
-        'event' => $event
-    ]);
-}
-
-/**
- * Get all registered events for the current participant
- */
-public function registrations(Request $request)
-{
-    try {
-        $user = $request->user();
-        
-        // Get registrations with event details
-        $registrations = Registration::where('user_id', $user->id)
-            ->with(['event' => function($query) {
-                $query->select('id', 'name', 'date', 'address', 'duration_minutes', 'price', 'description', 'image');
-            }])
+    // Get pending events
+    public function pendingEvents()
+    {
+        $events = Event::where('status', 'pending')
+            ->with('organizer')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Transform the data to include both registration and event details
-        $response = $registrations->map(function($registration) {
-            return [
-                'registration_id' => $registration->id,
-                'registration_date' => $registration->created_at->format('Y-m-d H:i:s'),
-                'payment_status' => $registration->payment_status,
-                'payment_amount' => $registration->payment_amount,
-                'event' => $registration->event
-            ];
-        });
+        return response()->json($events);
+    }
+
+    // Approve an event
+    public function approveEvent(Event $event)
+    {
+        $event->update(['status' => 'approved']);
+
+        // Notify the organizer
+        $event->organizer->notify(new EventApprovedNotification($event));
 
         return response()->json([
-            'success' => true,
-            'data' => $response
+            'message' => 'Event approved successfully',
+            'event' => $event
+        ]);
+    }
+
+    // Reject an event
+    public function rejectEvent(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'reason' => 'required|string|max:500'
         ]);
 
-    } catch (\Exception $e) {
-        Log::error('Failed to fetch participant registrations: ' . $e->getMessage());
+        $event->update([
+            'status' => 'rejected',
+            'rejection_reason' => $validated['reason']
+        ]);
+
+        // Notify the organizer
+        $event->organizer->notify(new EventRejectedNotification($event, $validated['reason']));
+
         return response()->json([
-            'success' => false,
-            'message' => 'Failed to fetch your registrations'
-        ], 500);
+            'message' => 'Event rejected successfully',
+            'event' => $event
+        ]);
     }
-}
+
+    /**
+     * Get all registered events for the current participant
+     */
+    public function registrations(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            // Get registrations with event details
+            $registrations = Registration::where('user_id', $user->id)
+                ->with([
+                    'event' => function ($query) {
+                        $query->select('id', 'name', 'date', 'address', 'duration_minutes', 'price', 'description', 'image');
+                    }
+                ])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Transform the data to include both registration and event details
+            $response = $registrations->map(function ($registration) {
+                return [
+                    'registration_id' => $registration->id,
+                    'registration_date' => $registration->created_at->format('Y-m-d H:i:s'),
+                    'payment_status' => $registration->payment_status,
+                    'payment_amount' => $registration->payment_amount,
+                    'event' => $registration->event
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $response
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch participant registrations: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch your registrations'
+            ], 500);
+        }
+    }
 }

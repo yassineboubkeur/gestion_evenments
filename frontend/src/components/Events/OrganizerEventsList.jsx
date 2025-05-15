@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getToken } from "../../utils/AuthenticatedUser";
 import DotsLoadingAnimation from "../LoadingAnimation/LoadingAnimation";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function OrganizerEventsList() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    const { addNotification } = useNotification();
     const fetchEvents = async () => {
         try {
             const response = await fetch(
@@ -58,11 +59,12 @@ export default function OrganizerEventsList() {
             if (!response.ok) {
                 throw new Error("Failed to delete event");
             }
+            addNotification("Event deleted successfully", "success");
 
             await fetchEvents();
         } catch (err) {
             console.error("Error deleting event:", err);
-            alert("Failed to delete event");
+            addNotification("Error deleting event", "error");
         }
     };
 
@@ -161,7 +163,11 @@ export default function OrganizerEventsList() {
                                                 : "Past"}
                                         </span>
                                         <span
-                                            className={`px-2 py-1  text-md font-medium rounded-full ${event.status === "approved" ? "bg-green-500":"bg-red-400" }`}
+                                            className={`px-2 py-1  text-md font-medium rounded-full ${
+                                                event.status === "approved"
+                                                    ? "bg-green-500"
+                                                    : "bg-red-400"
+                                            }`}
                                             title={
                                                 event.status === "pending"
                                                     ? "waiting for admin approval"
@@ -249,7 +255,6 @@ export default function OrganizerEventsList() {
                                 </div>
 
                                 <div className="flex gap-2">
-                                   
                                     <Link
                                         to={`/organizer/events/${event.id}/edit`}
                                         className="flex-1 px-3 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center"

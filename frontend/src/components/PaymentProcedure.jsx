@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import BookingConfirmation from "./BookingConfirmation"; // Import your confirmation component
+import DotsLoadingAnimation from "./LoadingAnimation/LoadingAnimation";
+import LoadingAnimationLitle from "./LoadingAnimation/LoadingAnimationLitle";
 
 const PaymentProcedure = ({ event, onBack }) => {
     const [paymentError, setPaymentError] = useState(null);
@@ -133,7 +135,6 @@ const PaymentProcedure = ({ event, onBack }) => {
             [name]: value,
         }));
     };
-    // Rest of your existing PaymentProcedure component JSX
 
         const onError = (err) => {
         if (err.message.includes("popup close")) {
@@ -163,32 +164,7 @@ const PaymentProcedure = ({ event, onBack }) => {
                 <h3 className="text-xl font-semibold text-gray-700 mb-3">
                     Event Details
                 </h3>
-                {/* <div className="bg-gray-50 p-4 rounded-lg flex justify-between">
-                    <div>
-                        <p className="font-medium">{event.name}</p>
-                        <p className="text-gray-600">
-                            {new Date(event.date).toLocaleDateString("en-US", {
-                                weekday: "short",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })}
-                        </p>
-                        <p className="text-gray-600">{event.location}</p>
-                        <p className="font-semibold mt-2">
-                            Total: {event.price ? `$${event.price}` : "Free"}
-                        </p>
-                    </div>
-                    <div className="flex-shrink-0 mr-4">
-                        <img
-                            src={`http://127.0.0.1:8000/storage/${event.image}`}
-                            alt={event.name}
-                            className="w-[200px] h-[200px] object-cover rounded"
-                        />
-                    </div>
-                </div> */}
+               
                 <div className="bg-gray-50 p-4 rounded-lg flex flex-col md:flex-row justify-between gap-4">
                     <div className="flex-1 order-2 md:order-1">
                         <p className="font-medium text-lg">{event.name}</p>
@@ -397,8 +373,10 @@ const PaymentProcedure = ({ event, onBack }) => {
             )}
 
             {isProcessing ? (
-                <div className="mb-6 p-4 bg-blue-100 text-blue-700 rounded-lg">
+                <div className="mb-6 p-4 grid grid-cols-1 items-center justify-center bg-blue-100 text-blue-700 rounded-lg">
                     Processing your payment...
+                    {/* <DotsLoadingAnimation/> */}
+                    {/* <LoadingAnimationLitle/> */}
                 </div>
             ) : (
                 <div className="mb-6">

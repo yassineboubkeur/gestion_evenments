@@ -159,7 +159,7 @@ export default function HomePage() {
 
     return (
         <div
-            className={`min-h-screen ${
+            className={`min-h-screen  ${
                 sharedString ? `bg${sharedString}` : "bg0"
             }`}
         >
@@ -389,7 +389,7 @@ export default function HomePage() {
                     {/* Right Content - Events Listing */}
                     <div className="flex-1">
                         <div
-                            className="p-2 rounded-2xl z-20"
+                            className="p-2 rounded-2xl  z-20"
                             style={glassStyle}
                         >
                             {showEventDetails ? (

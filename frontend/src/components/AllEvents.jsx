@@ -90,10 +90,10 @@ const AllEvents = ({
                                             {event.category}
                                         </span>
                                         <span
-                                            className={`text-xs font-semibold px-2 py-1 rounded-full shadow-md ${
+                                            className={`text-sm font-semibold px-2 py-1 rounded-full shadow-md ${
                                                 isEventUpcoming(event.date)
-                                                    ? "bg-green-300 text-green-800"
-                                                    : "bg-red-300 text-red-800"
+                                                    ? "bg-green-500 text-slate-800"
+                                                    : "bg-red-500 text-red-900"
                                             }`}
                                         >
                                             {isEventUpcoming(event.date)
