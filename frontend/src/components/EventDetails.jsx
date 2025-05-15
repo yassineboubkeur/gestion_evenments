@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 // import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
-import LoginForm from "./Login";
+// import LoginForm from "./Login";
 import PaymentProcedure from "./PaymentProcedure";
 import { useLikes } from "../context/LikesContext";
 import { useStyle } from "../context/StyleContext";
 // import LoadingComponent from "./LoadingAnimation/LoadingComponent";
 import DotsLoadingAnimation from "./LoadingAnimation/LoadingAnimation";
+import LoginForm from "./LoginForm";
 
 export default function EventDetails({ eventId, onBack }) {
     const { id } = useParams();
@@ -15,6 +16,7 @@ export default function EventDetails({ eventId, onBack }) {
     const [error, setError] = useState(null);
     const [showLogin, setShowLogin] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
+    const [fromEventDetail, setFromEventDetail] = useState(false);
     const navigate = useNavigate();
     const isAuthenticated = !!localStorage.getItem("token");
     const { likedEvents, toggleLike } = useLikes();
@@ -44,10 +46,18 @@ export default function EventDetails({ eventId, onBack }) {
         fetchEventDetails();
     }, [eventId]);
 
-    const handleBookNow = () => {
-        isAuthenticated ? setShowPayment(true) : setShowLogin(true);
-    };
+    // const handleBookNow = () => {
+    //     isAuthenticated ? setShowPayment(true) : setShowLogin(true);
+    // };
 
+    const handleBookNow = () => {
+        if (!isAuthenticated) {
+            setShowLogin(true);
+            setFromEventDetail(true);
+            return;
+        }
+        setShowPayment(true);
+    };
     const handleLike = async () => {
         const result = await toggleLike(event.id);
         if (result?.needsLogin) setShowLogin(true);
@@ -63,7 +73,7 @@ export default function EventDetails({ eventId, onBack }) {
         return (
             <div className="flex justify-center items-center min-h-[300px]">
                 {/* <LoadingAnimation size="lg" /> */}
-                <DotsLoadingAnimation/>
+                <DotsLoadingAnimation />
             </div>
         );
     }
@@ -94,9 +104,8 @@ export default function EventDetails({ eventId, onBack }) {
         return eventDate < now;
     };
 
-
     return (
-         <div className="min-h-screen ">
+        <div className="min-h-screen ">
             <div className="max-w-6xl mx-auto   rounded-2xl overflow-hidden  ">
                 {showPayment ? (
                     <PaymentProcedure
@@ -137,7 +146,7 @@ export default function EventDetails({ eventId, onBack }) {
                         </div>
 
                         {/* Content */}
-                        <div className="grid md:grid-cols-2 gap-8  h-[540px]">
+                        <div className="grid md:grid-cols-2 gap-8  md:h-[540px]">
                             {/* Image */}
                             <div className="relative overflow-hidden rounded-xl shadow-md h-full">
                                 <img
@@ -156,11 +165,23 @@ export default function EventDetails({ eventId, onBack }) {
 
                             {/* Details */}
                             <div className="overflow-y-auto pr-2">
-                                <h1 className={`text-3xl font-bold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-2`}>
+                                <h1
+                                    className={`text-3xl font-bold ${
+                                        sharedString != 0 && sharedString != 7
+                                            ? "text_dark"
+                                            : "text_dark"
+                                    } mb-2`}
+                                >
                                     {event.name}
                                 </h1>
 
-                                <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
+                                <div
+                                    className={`flex items-center ${
+                                        sharedString != 0 && sharedString != 7
+                                            ? "text_dark"
+                                            : "text_dark"
+                                    } mb-1`}
+                                >
                                     <svg
                                         className="w-5 h-5 mr-2 text-gray-500"
                                         fill="none"
@@ -177,7 +198,13 @@ export default function EventDetails({ eventId, onBack }) {
                                     <span>{event.address}</span>
                                 </div>
 
-                                <div className={`flex items-center ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-3`}>
+                                <div
+                                    className={`flex items-center ${
+                                        sharedString != 0 && sharedString != 7
+                                            ? "text_dark"
+                                            : "text_dark"
+                                    } mb-3`}
+                                >
                                     <svg
                                         className="w-5 h-5 mr-2 text-gray-500"
                                         fill="none"
@@ -206,15 +233,35 @@ export default function EventDetails({ eventId, onBack }) {
                                 </div>
 
                                 <div className="mb-3">
-                                    <h2 className={`text-xl font-semibold ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'} mb-1`}>
+                                    <h2
+                                        className={`text-xl font-semibold ${
+                                            sharedString != 0 &&
+                                            sharedString != 7
+                                                ? "text_dark"
+                                                : "text_dark"
+                                        } mb-1`}
+                                    >
                                         About
                                     </h2>
-                                    <p className={`${sharedString !== 0 && sharedString !== 7 ? 'text_dark' : 'text_dark'} leading-relaxed`}>
+                                    <p
+                                        className={`${
+                                            sharedString !== 0 &&
+                                            sharedString !== 7
+                                                ? "text_dark"
+                                                : "text_dark"
+                                        } leading-relaxed`}
+                                    >
                                         {event.description}
                                     </p>
                                 </div>
 
-                                <div className={`mb-6 space-y-2 text-sm ${sharedString != 0 && sharedString != 7 ? 'text_dark' : 'text_dark'}`}>
+                                <div
+                                    className={`mb-6 space-y-2 text-sm ${
+                                        sharedString != 0 && sharedString != 7
+                                            ? "text_dark"
+                                            : "text_dark"
+                                    }`}
+                                >
                                     <div>
                                         <strong>Organizer:</strong>{" "}
                                         {event.organizer?.name || "N/A"}
@@ -280,15 +327,13 @@ export default function EventDetails({ eventId, onBack }) {
 
             {/* Login Modal */}
             {showLogin && (
-                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-center items-center">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
-                            Login Required
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                            Please log in to continue booking.
-                        </p>
-                        <LoginForm onLoginSuccess={handleLoginSuccess} miniLogin={true} />
+                <div className="fixed inset-0 z-50 bg-black/60 rounded-xl   flex justify-center items-center">
+                    <div className=" rounded-2xl shadow-xl bg-white bg-opacity-80 backdrop-blur-sm  w-full max-w-md mx-4 p-3 md:p-6">
+                        <LoginForm
+                            onLoginSuccess={handleLoginSuccess}
+                            miniLogin={true}
+                            fromEventDetail={fromEventDetail}
+                        />
                         <div className="text-right mt-4">
                             <button
                                 onClick={() => setShowLogin(false)}

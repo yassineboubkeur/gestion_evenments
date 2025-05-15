@@ -380,9 +380,7 @@ export default function HomePage() {
                                     </select>
                                 </div>
                                 <div className="p-6">
-
-                                <ThemeBg />
-
+                                    <ThemeBg />
                                 </div>
                             </div>
                         </div>

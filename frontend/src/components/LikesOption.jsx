@@ -15,9 +15,7 @@ const LikesOption = ({ eventId, likesCount, isLiked, onLikeToggle }) => {
                 {/* {console.log(`Event ${eventId} isLiked:`, isLiked, "likesCount:", likesCount)} */}
                 <svg
                     className={`w-5 h-5 ${
-                        isLiked
-                            ? "text-red-500 fill-red-500"
-                            : "text-gray-400"
+                        isLiked ? "text-red-500 fill-red-500" : "text-gray-400"
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -39,4 +37,3 @@ const LikesOption = ({ eventId, likesCount, isLiked, onLikeToggle }) => {
 };
 
 export default LikesOption;
-

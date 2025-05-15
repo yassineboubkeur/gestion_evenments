@@ -1,68 +1,71 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import LoadingAnimationLitle from '../LoadingAnimation/LoadingAnimationLitle';
-import { useNotification } from '../context/NotificationContext';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import LoadingAnimationLitle from "../LoadingAnimation/LoadingAnimationLitle";
+import { useNotification } from "../context/NotificationContext";
 
 export default function EventApprovals() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const [rejectionReason, setRejectionReason] = useState('');
+    const [rejectionReason, setRejectionReason] = useState("");
     const { addNotification } = useNotification();
 
     useEffect(() => {
         const fetchPendingEvents = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('http://127.0.0.1:8000/api/admin/pending-events', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                const token = localStorage.getItem("token");
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/admin/pending-events",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
                     }
-                });
-                
+                );
+
                 if (!response.ok) {
-                    throw new Error('Failed to fetch pending events');
+                    throw new Error("Failed to fetch pending events");
                 }
-                
+
                 const data = await response.json();
                 setEvents(data);
                 // addNotification('Pending events loaded successfully', 'success');
             } catch (error) {
-                console.error('Error:', error);
+                console.error("Error:", error);
                 // addNotification(error.message || 'Failed to load pending events', 'error');
             } finally {
                 setLoading(false);
             }
         };
-        
+
         fetchPendingEvents();
     }, [addNotification]);
 
     const handleApprove = async (eventId) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://127.0.0.1:8000/api/admin/events/${eventId}/approve`, 
+                `http://127.0.0.1:8000/api/admin/events/${eventId}/approve`,
                 {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
                 }
             );
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to approve event');
+                throw new Error(errorData.message || "Failed to approve event");
             }
-            
+
             // Remove from list
-            setEvents(events.filter(event => event.id !== eventId));
+            setEvents(events.filter((event) => event.id !== eventId));
             // addNotification('Event approved successfully!', 'success');
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
             // addNotification(error.message || 'Failed to approve event', 'error');
         }
     };
@@ -72,33 +75,33 @@ export default function EventApprovals() {
             // addNotification('Please provide a rejection reason', 'warning');
             return;
         }
-        
+
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://127.0.0.1:8000/api/admin/events/${selectedEvent.id}/reject`, 
+                `http://127.0.0.1:8000/api/admin/events/${selectedEvent.id}/reject`,
                 {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ reason: rejectionReason })
+                    body: JSON.stringify({ reason: rejectionReason }),
                 }
             );
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to reject event');
+                throw new Error(errorData.message || "Failed to reject event");
             }
-            
+
             // Remove from list
-            setEvents(events.filter(event => event.id !== selectedEvent.id));
+            setEvents(events.filter((event) => event.id !== selectedEvent.id));
             setSelectedEvent(null);
-            setRejectionReason('');
+            setRejectionReason("");
             // addNotification('Event rejected successfully', 'success');
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
             // addNotification(error.message || 'Failed to reject event', 'error');
         }
     };
@@ -108,29 +111,38 @@ export default function EventApprovals() {
     return (
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-6">Pending Event Approvals</h2>
-            
+
             {events.length === 0 ? (
                 <div className="text-center py-12">
-                    <p className="text-gray-500">No pending events for approval</p>
+                    <p className="text-gray-500">
+                        No pending events for approval
+                    </p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {events.map(event => (
-                        <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                    {events.map((event) => (
+                        <div
+                            key={event.id}
+                            className="bg-white rounded-lg shadow-md overflow-hidden"
+                        >
                             {event.image && (
-                                <img 
-                                    src={`/storage/${event.image}`} 
+                                <img
+                                    src={`/storage/${event.image}`}
                                     alt={event.name}
                                     className="w-full h-48 object-cover"
                                 />
                             )}
                             <div className="p-4">
-                                <h3 className="font-bold text-lg mb-2">{event.name}</h3>
-                                <p className="text-gray-600 mb-2 line-clamp-2">{event.description}</p>
+                                <h3 className="font-bold text-lg mb-2">
+                                    {event.name}
+                                </h3>
+                                <p className="text-gray-600 mb-2 line-clamp-2">
+                                    {event.description}
+                                </p>
                                 <p className="text-sm text-gray-500 mb-4">
                                     Organized by: {event.organizer.name}
                                 </p>
-                                
+
                                 <div className="flex justify-between mt-4">
                                     <button
                                         onClick={() => handleApprove(event.id)}
@@ -155,7 +167,9 @@ export default function EventApprovals() {
             {selectedEvent && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full">
-                        <h3 className="font-bold text-lg mb-4">Reject Event: {selectedEvent.name}</h3>
+                        <h3 className="font-bold text-lg mb-4">
+                            Reject Event: {selectedEvent.name}
+                        </h3>
                         <textarea
                             value={rejectionReason}
                             onChange={(e) => setRejectionReason(e.target.value)}
@@ -166,7 +180,7 @@ export default function EventApprovals() {
                             <button
                                 onClick={() => {
                                     setSelectedEvent(null);
-                                    setRejectionReason('');
+                                    setRejectionReason("");
                                 }}
                                 className="px-4 py-2 border rounded hover:bg-gray-50 transition-colors"
                             >
@@ -175,9 +189,9 @@ export default function EventApprovals() {
                             <button
                                 onClick={handleReject}
                                 className={`px-4 py-2 rounded text-white transition-colors ${
-                                    rejectionReason 
-                                        ? 'bg-red-500 hover:bg-red-600' 
-                                        : 'bg-red-300 cursor-not-allowed'
+                                    rejectionReason
+                                        ? "bg-red-500 hover:bg-red-600"
+                                        : "bg-red-300 cursor-not-allowed"
                                 }`}
                                 disabled={!rejectionReason}
                             >

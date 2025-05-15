@@ -133,13 +133,14 @@ export default function ParticipantEvents() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {events.map((event) => (
+                    {events.map((event,idkey) => (
                         <div
-                            key={event.event.id}
+                        key={idkey}
+                            
                             className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
                         >
-                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                                <div className="flex-1">
+                            <div  className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                                <div  className="flex-1">
                                     <h3 className="text-xl font-semibold text-gray-800">
                                         {event.event.name}
                                     </h3>
