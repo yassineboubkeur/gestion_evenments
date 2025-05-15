@@ -25,10 +25,5 @@ class ContactController extends Controller
 
         // Sauvegarder en base de données
         Contact::create($validated);
-
-        // Envoyer l'email
-        Mail::to('your@email.com')->send(new ContactFormMail($validated));
-
-        return back()->with('success', 'Thank you for your message!');
     }
 }

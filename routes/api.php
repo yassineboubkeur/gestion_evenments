@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/events/{event}/toggle-like', [EventController::class, 'toggleLike']);
 });
 
-
+Route::post('/contact', [ContactController::class, 'store']);
 
 

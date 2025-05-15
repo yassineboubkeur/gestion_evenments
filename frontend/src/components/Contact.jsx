@@ -22,46 +22,51 @@ const ContactForm = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErrors({});
-        setIsSubmitting(true);
+    e.preventDefault();
+    setErrors({});
+    setIsSubmitting(true);
 
-        try {
-            const response = await fetch("/api/contact", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "X-CSRF-TOKEN": document.querySelector(
-                        'meta[name="csrf-token"]'
-                    ).content,
-                },
-                body: JSON.stringify(formData),
-            });
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/contact", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
 
-            const data = await response.json();
+        let data = {};
+        const contentType = response.headers.get("content-type");
 
-            if (!response.ok) {
-                if (response.status === 422) {
-                    setErrors(data.errors);
-                } else {
-                    throw new Error(data.message || "Something went wrong");
-                }
-                return;
-            }
-
-            setSuccess(true);
-            setFormData({ name: "", email: "", subject: "", message: "" });
-
-            setTimeout(() => {
-                navigate("/thank-you");
-            }, 2000);
-        } catch (error) {
-            console.error("Error submitting form:", error);
-        } finally {
-            setIsSubmitting(false);
+        // Only parse JSON if response is not empty and is JSON
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
         }
-    };
+
+        if (!response.ok) {
+            if (response.status === 422) {
+                setErrors(data.errors || {});
+            } else {
+                throw new Error(data.message || "Something went wrong");
+            }
+            return;
+        }
+
+        setSuccess(true);
+        setFormData({ name: "", email: "", subject: "", message: "" });
+
+        // Optional: redirect after 2 seconds
+        setTimeout(() => {
+            navigate("/");
+        }, 2000);
+    } catch (error) {
+        console.error("Error submitting form:", error);
+    } finally {
+        setIsSubmitting(false);
+    }
+};
+
 
     return (
         <div className="max-w-lg mx-auto p-6 sm:p-8 bg-white rounded-2xl shadow-xl transform transition-all duration-300 hover:shadow-2xl">
